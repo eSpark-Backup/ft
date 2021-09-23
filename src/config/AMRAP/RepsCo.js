@@ -1,0 +1,492 @@
+const program = [
+  {
+    key: 'AMRAP',
+    value:'1'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'2'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'3'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'4'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'5'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'6'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'7'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'8'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'9'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'10'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'11'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'12'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'13'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'14'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'15'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'16'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'17'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'18'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'19'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'20'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'21'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'22'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'23'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'24'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'25'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'26'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'27'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'28'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'29'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'30'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'35'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'40'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'45'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'50'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'55'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'60'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'65'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'70'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'75'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'80'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'85'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'90'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'95'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'100'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'105'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'110'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'115'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'120'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'125'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'130'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'135'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'140'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'145'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'150'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'200'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'250'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'300'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'350'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'400'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'450'
+,
+  },
+  {
+    key: 'AMRAP',
+    value:'500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'550'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'600'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'650'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'700'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'750'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'800'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'850'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'900'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'950'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1100'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1200'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1300'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1400'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1600'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1700'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1800'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'1900'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'2000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'2500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'3000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'3500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'4000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'4500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'5000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'5500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'6000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'6500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'7000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'7500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'8000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'8500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'9000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'9500'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'10000'
+,
+  },
+  {
+    key:'AMRAP',
+    value:'Max'
+,
+  },
+];
