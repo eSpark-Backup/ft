@@ -587,7 +587,7 @@ export default class App extends Component {
                       {loader ? (
                         <ActivityIndicator
                           size="large"
-                          color="#4f55bd"
+                          color="#FF6100"
                           style={{top: height * 0.08}}
                         />
                       ) : dateMatched == false ? (
