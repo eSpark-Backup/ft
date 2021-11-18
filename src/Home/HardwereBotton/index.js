@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -28,6 +28,8 @@ import {
   Alert,
   DeviceEventEmitter,
   ToastAndroid,
+  Modal,
+  Button,
 } from 'react-native';
 
 import {
@@ -38,15 +40,14 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import style from './style';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import LinearGradient from 'react-native-linear-gradient';
 import * as Progress from 'react-native-progress';
-import { Fonts } from '../../utils/fonts';
+import {Fonts} from '../../utils/fonts';
+import {RNSerialport, definitions, actions} from 'react-native-serialport';
+import {Toolbar, Icon, IconToggle} from 'react-native-material-ui';
 
-import { RNSerialport, definitions, actions } from 'react-native-serialport';
-import { Toolbar, Icon, IconToggle } from 'react-native-material-ui';
-
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -112,6 +113,7 @@ export default class App extends Component {
       returnedDataType: definitions.RETURNED_DATA_TYPES.HEXSTRING,
       activiyValue: 1,
       bluetoothIndex: 1,
+      serialModal: false,
     };
     //* ye hamare listener lage hain functions pr jo check karte rehte hai usb port pr
     this.startUsbListener = this.startUsbListener.bind(this);
@@ -185,30 +187,30 @@ export default class App extends Component {
   };
   // ye function sirf state change kar rahe hain har usb action pr
   onServiceStarted(response) {
-    this.setState({ servisStarted: true });
+    this.setState({servisStarted: true});
     if (response.deviceAttached) {
       this.onDeviceAttached();
     }
   }
   // ye function sirf state change kar rahe hain har usb action pr
   onServiceStopped() {
-    this.setState({ servisStarted: false });
+    this.setState({servisStarted: false});
   }
   // ye function sirf state change kar rahe hain har usb action pr
   onDeviceAttached() {
-    this.setState({ usbAttached: true });
+    this.setState({usbAttached: true});
   }
   // ye function sirf state change kar rahe hain har usb action pr
   onDeviceDetached() {
-    this.setState({ usbAttached: false });
+    this.setState({usbAttached: false});
   }
   // ye function sirf state change kar rahe hain har usb action pr
   onConnected() {
-    this.setState({ connected: true });
+    this.setState({connected: true});
   }
   // ye function sirf state change kar rahe hain har usb action pr
   onDisconnected() {
-    this.setState({ connected: false });
+    this.setState({connected: false});
   }
   //* ye function data read karta hai usb se jo aarha hai aur output state pr save kar raha hai */
   onReadData(data) {
@@ -216,16 +218,18 @@ export default class App extends Component {
       this.state.returnedDataType === definitions.RETURNED_DATA_TYPES.INTARRAY
     ) {
       const payload = RNSerialport.intArrayToUtf16(data.payload);
-      this.setState({ output: payload });
+      this.setState({output: payload});
     } else if (
       this.state.returnedDataType === definitions.RETURNED_DATA_TYPES.HEXSTRING
     ) {
       const payload = RNSerialport.hexToUtf16(data.payload);
-      this.setState({ output: payload });
+      this.setState({output: payload});
     }
+    RNSerialport.writeString('App Says Hellos');
     const numData = parseInt(this.state.output);
     if (numData > 0 || numData <= 10) {
       this.hardwereBottonWork(numData);
+      RNSerialport.writeString('Acknowleged!!');
       console.log('hello ye chala ');
     }
   }
@@ -247,12 +251,12 @@ export default class App extends Component {
     } else {
       return;
     }
-    this.setState({ output: data });
+    this.setState({output: data});
   }
   // ye function read data ki state clear kar raha hai
   handleClearButton() {
-    this.setState({ output: '' });
-    this.setState({ outputArray: [] });
+    this.setState({output: ''});
+    this.setState({outputArray: []});
   }
   // ye function data string me data send kar rhaa hai
 
@@ -269,23 +273,23 @@ export default class App extends Component {
   checkActivity = () => {
     // console.log('activity VAlue ka bata', this.state.activiyValue)
     if (this.state.activiyValue == this.state.activity.length) {
-      this.setState({ activiyValue: 1 });
-      this.setState({ bluetoothIndex: 1 });
+      this.setState({activiyValue: 1});
+      this.setState({bluetoothIndex: 1});
       setTimeout(() => {
-        this.setState({ actCondition: false });
+        this.setState({actCondition: false});
       }, 100);
     } else {
-      this.setState({ activiyValue: this.state.activiyValue + 1 });
-      this.setState({ bluetoothIndex: this.state.bluetoothIndex + 1 });
+      this.setState({activiyValue: this.state.activiyValue + 1});
+      this.setState({bluetoothIndex: this.state.bluetoothIndex + 1});
       setTimeout(() => {
-        this.setState({ actCondition: false });
+        this.setState({actCondition: false});
       }, 100);
     }
   };
   bluetoothButtonWork = (value) => {
     if (value === 'true') {
       if (this.state.bluetoothIndex > 10) {
-        this.setState({ bluetoothIndex: 1 });
+        this.setState({bluetoothIndex: 1});
         console.log('Bluetooth Index ka bata', this.state.bluetoothIndex);
         setTimeout(() => {
           this.hardwereBottonWork(this.state.bluetoothIndex);
@@ -303,9 +307,9 @@ export default class App extends Component {
     // this.activiyValue = 21
     if (this.state.isShow == true && this.state.emomCondition == false) {
       if (this.state.runningCondtion == true) {
-        this.setState({ runningCondtion: false });
+        this.setState({runningCondtion: false});
         setTimeout(() => {
-          this.setState({ runningCondtion: true });
+          this.setState({runningCondtion: true});
         }, 1500);
         if (this.state.activiyValue > 10 && this.state.activiyValue < 21) {
           // console.log('10 wali')
@@ -345,7 +349,7 @@ export default class App extends Component {
           ToastAndroid.SHORT,
         );
         setTimeout(() => {
-          this.setState({ runningCondtion: true });
+          this.setState({runningCondtion: true});
         }, 1500);
         // Alert.alert('Alert!!', 'Wait A Second Press Again', [
         //   {
@@ -358,9 +362,9 @@ export default class App extends Component {
   countRound = () => {
     if (this.state.isShow == true && this.state.emomCondition == false) {
       if (this.state.runningCondtion == true) {
-        this.setState({ runningCondtion: false });
+        this.setState({runningCondtion: false});
         setTimeout(() => {
-          this.setState({ runningCondtion: true });
+          this.setState({runningCondtion: true});
         }, 1500);
         this.props.countRound(!this.state.clearData);
         setTimeout(() => {
@@ -369,7 +373,7 @@ export default class App extends Component {
       }
     }
   };
-  _renderBlutoothList = ({ item, index }) => {
+  _renderBlutoothList = ({item, index}) => {
     return (
       <View key={index}>
         <TouchableOpacity
@@ -388,14 +392,14 @@ export default class App extends Component {
           onPress={() => {
             this.bluetoothButtonWork(item.id);
           }}>
-          <Text style={{ fontSize: height * 0.025, color: 'black' }}>
+          <Text style={{fontSize: height * 0.025, color: 'black'}}>
             {item.id}
           </Text>
         </TouchableOpacity>
       </View>
     );
   };
-  _renderMyList = ({ item, index }) => {
+  _renderMyList = ({item, index}) => {
     // console.log("indexindexindex",index+1)
     return (
       <View key={index}>
@@ -415,7 +419,7 @@ export default class App extends Component {
           onPress={() => {
             this.hardwereBottonWork(item.id);
           }}>
-          <Text style={{ fontSize: height * 0.025, color: 'black' }}>
+          <Text style={{fontSize: height * 0.025, color: 'black'}}>
             {item.id}
           </Text>
         </TouchableOpacity>
@@ -425,7 +429,7 @@ export default class App extends Component {
   emomTimerFn = () => {
     // let { hardValue, isShow, activity, index } = this.state;
     // let count = index;
-    this.setState({ index: this.state.index + 1 });
+    this.setState({index: this.state.index + 1});
     setTimeout(() => {
       this.props.hardValue(this.state.index);
       setTimeout(() => {
@@ -434,9 +438,9 @@ export default class App extends Component {
     }, 50);
   };
   checkValueWithLenght = () => {
-    const { isShow, hardValue, activity, index } = this.state;
+    const {isShow, hardValue, activity, index} = this.state;
     if (index == activity.length) {
-      this.setState({ index: 0 });
+      this.setState({index: 0});
       // console.log('0 HOA HAI YA NHI')
     }
   };
@@ -444,27 +448,28 @@ export default class App extends Component {
   render() {
     // console.log(this.state.index ,'index hardwere')
     console.log(this.props.BTValues, 'BT hardwere');
-    // console.log('Service Started? ', this.state.servisStarted);
-    // console.log('Usb attached? ', this.state.usbAttached);
-    // console.log('Usb connected? ', this.state.connected);
-    // console.log('Data Read ?: ', this.state.output);
+    //todo: Serial Communication with Embedded
+    console.log('Service Started? ', this.state.servisStarted);
+    console.log('Usb attached? ', this.state.usbAttached);
+    console.log('Usb connected? ', this.state.connected);
+    console.log('Data Read ?: ', this.state.output);
     if (this.props.playOnOrOff == true && this.state.isShow == false) {
-      this.setState({ isShow: true });
+      this.setState({isShow: true});
       setTimeout(() => {
-        this.setState({ runningCondtion: true });
+        this.setState({runningCondtion: true});
       }, 4000);
       if (this.props.amrap == 0) {
         null;
       } else {
         setTimeout(() => {
-          this.setState({ isShow: false, runningCondtion: false });
-          this.setState({ activiyValue: 1 });
+          this.setState({isShow: false, runningCondtion: false});
+          this.setState({activiyValue: 1});
         }, 1000 * this.props.amrap - 1 * 1000);
       }
       if (this.props.emomMinutes == 0) {
         null;
       } else {
-        this.setState({ emomCondition: true });
+        this.setState({emomCondition: true});
         const timer1 = setInterval(() => {
           this.emomTimerFn();
           setTimeout(() => {
@@ -478,7 +483,7 @@ export default class App extends Component {
             emomCondition: false,
             runningCondtion: false,
           });
-          this.setState({ activiyValue: 1 });
+          this.setState({activiyValue: 1});
           clearInterval(timer1);
         }, 1000 * this.props.emomMinutes);
       }
@@ -493,22 +498,52 @@ export default class App extends Component {
         runningCondtion: false,
       });
       setTimeout(() => {
-        this.setState({ forTimeRoundCon: false });
+        this.setState({forTimeRoundCon: false});
       }, 100);
     }
     if (this.props.actCondition == true && this.state.actCondition == false) {
-      this.setState({ actCondition: true });
+      this.setState({actCondition: true});
       setTimeout(() => {
         this.checkActivity();
       }, 20);
       // this.addButtonValues()
     }
     return (
-      <View style={[style.centerContainer, {
-        height: this.props.fullScreen ? 0 : height * .15,
-        overflow: 'hidden',
-
-      }]}>
+      <View
+        style={[
+          style.centerContainer,
+          {
+            height: this.props.fullScreen ? 0 : height * 0.15,
+            overflow: 'hidden',
+          },
+        ]}>
+        <Modal
+          visible={this.state.serialModal}
+          animationType="slide"
+          onRequestClose={() => this.setState({serialModal: false})}>
+          <View
+            style={{
+              backgroundColor: '#fff',
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{fontSize: 25}}>Output:</Text>
+            <View
+              style={{
+                width: width * 0.9,
+                height: height / 2,
+                borderColor: '#000',
+                borderWidth: 1,
+              }}>
+              <Text style={{fontSize: 20}}>{this.state.output}</Text>
+            </View>
+            <Button
+              title="Clear Output"
+              onPress={() => this.setState({output: ''})}
+            />
+          </View>
+        </Modal>
         <View
           style={{
             flex: 1,
@@ -542,17 +577,17 @@ export default class App extends Component {
           </TouchableOpacity>
           <FlatList
             horizontal={true}
-            contentContainerStyle={{ flex: 1, justifyContent: 'space-around' }}
+            contentContainerStyle={{flex: 1, justifyContent: 'space-around'}}
             data={this.state.botton}
             renderItem={(item, index) => this._renderMyList(item, index)}
-          // keyExtractor={(item,) => item.id}
+            // keyExtractor={(item,) => item.id}
           />
           <FlatList
             horizontal={true}
             // contentContainerStyle={{flex: 1, justifyContent: 'space-around'}}
             data={this.state.bluetoothButton}
             renderItem={(item, index) => this._renderBlutoothList(item, index)}
-          // keyExtractor={(item,) => item.id}
+            // keyExtractor={(item,) => item.id}
           />
           <TouchableOpacity
             style={{
@@ -564,6 +599,7 @@ export default class App extends Component {
               borderRadius: width * 0.003,
               borderRadius: width * 0.1,
             }}
+            onLongPress={() => this.setState({serialModal: true})}
             onPress={this.countRound}>
             <Text
               style={{
