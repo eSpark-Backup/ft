@@ -46,7 +46,7 @@ import * as Progress from 'react-native-progress';
 import {Fonts} from '../../utils/fonts';
 import {RNSerialport, definitions, actions} from 'react-native-serialport';
 import {Toolbar, Icon, IconToggle} from 'react-native-material-ui';
-
+import clc from 'cli-color';
 const {height, width} = Dimensions.get('window');
 export default class App extends Component {
   constructor(props) {
@@ -113,6 +113,8 @@ export default class App extends Component {
       returnedDataType: definitions.RETURNED_DATA_TYPES.HEXSTRING,
       activiyValue: 1,
       bluetoothIndex: 1,
+      serialIndex: 1,
+      temp: 1,
       serialModal: false,
     };
     //* ye hamare listener lage hain functions pr jo check karte rehte hai usb port pr
@@ -225,12 +227,33 @@ export default class App extends Component {
       const payload = RNSerialport.hexToUtf16(data.payload);
       this.setState({output: payload});
     }
-    RNSerialport.writeString('App Says Hellos');
     const numData = parseInt(this.state.output);
-    if (numData > 0 || numData <= 10) {
-      this.hardwereBottonWork(numData);
-      RNSerialport.writeString('Acknowleged!!');
-      console.log('hello ye chala ');
+    try {
+      if (this.state.output === 'R') {
+        this.countRound();
+        this.handleSend();
+      } else if (Number.isInteger(numData)) {
+        if (this.state.serialIndex > 0) {
+          if (numData == this.state.temp) {
+            //? Expected Result output only
+            setTimeout(() => {
+              this.hardwereBottonWork(numData);
+              console.log(clc.bgRed('hello ye chala+++++++++++++++', numData));
+              console.log(
+                clc.bgRed('what is serial Index', this.state.serialIndex),
+              );
+            }, 800);
+          } else {
+            console.log(clc.greenBright('Didnt Get Expected Value', numData));
+            console.log('Need thi Value', this.state.temp);
+          }
+        }
+      } else {
+        RNSerialport.writeString('NACK');
+        console.log(clc.yellowBright('Ghalat Cheez'));
+      }
+    } catch (e) {
+      console.log('Error', e);
     }
   }
   // ye function error aane ki surat pr console kar raha hai
@@ -260,8 +283,8 @@ export default class App extends Component {
   }
   // ye function data string me data send kar rhaa hai
 
-  handleSendButton = () => {
-    RNSerialport.writeString('Yahoo! Maza aagya');
+  handleSend = () => {
+    RNSerialport.writeString('ACK');
   };
   //! ----------------------------------------- yahan tk hoa hai kaam serial device reading ka ----------------------------------------------------- !//
 
@@ -275,12 +298,17 @@ export default class App extends Component {
     if (this.state.activiyValue == this.state.activity.length) {
       this.setState({activiyValue: 1});
       this.setState({bluetoothIndex: 1});
+      this.setState({serialIndex: 1});
+      this.setState({temp: 1});
+      RNSerialport.writeString('N');
+      console.log(clc.xterm(172)('Reset Temp'));
       setTimeout(() => {
         this.setState({actCondition: false});
       }, 100);
     } else {
       this.setState({activiyValue: this.state.activiyValue + 1});
       this.setState({bluetoothIndex: this.state.bluetoothIndex + 1});
+      this.setState({serialIndex: this.state.serialIndex + 1});
       setTimeout(() => {
         this.setState({actCondition: false});
       }, 100);
@@ -307,42 +335,45 @@ export default class App extends Component {
     // this.activiyValue = 21
     if (this.state.isShow == true && this.state.emomCondition == false) {
       if (this.state.runningCondtion == true) {
+        this.setState({
+          temp: this.state.temp + 1,
+        });
         this.setState({runningCondtion: false});
         setTimeout(() => {
           this.setState({runningCondtion: true});
         }, 1500);
-        if (this.state.activiyValue > 10 && this.state.activiyValue < 21) {
-          // console.log('10 wali')
-          const total = (Number(value) + 10).toString();
-          // console.log('total Value 10', total)
-          setTimeout(() => {
-            this.props.hardValue(total);
-          }, 5);
-          setTimeout(() => {
-            this.props.hardValue(0);
-          }, 500);
-          // this.checkActivity()
-        } else if (this.state.activiyValue > 20) {
-          // console.log('20 wali')
-          // console.log('total Value 21', total)
-          const total = (Number(value) + 20).toString();
-          setTimeout(() => {
-            this.props.hardValue(total);
-          }, 5);
-          setTimeout(() => {
-            this.props.hardValue(0);
-          }, 500);
-          // this.checkActivity()
-        } else {
-          // console.log('else wali')
-          setTimeout(() => {
-            this.props.hardValue(value);
-          }, 5);
-          setTimeout(() => {
-            this.props.hardValue(0);
-          }, 500);
-          // this.checkActivity()
-        }
+        // if (this.state.activiyValue > 10 && this.state.activiyValue < 21) {
+        //   // console.log('10 wali')
+        //   const total = (Number(value) + 10).toString();
+        //   // console.log('total Value 10', total)
+        //   setTimeout(() => {
+        //     this.props.hardValue(total);
+        //   }, 5);
+        //   setTimeout(() => {
+        //     this.props.hardValue(0);
+        //   }, 500);
+        //   // this.checkActivity()
+        // } else if (this.state.activiyValue > 20) {
+        //   // console.log('20 wali')
+        //   // console.log('total Value 21', total)
+        //   const total = (Number(value) + 20).toString();
+        //   setTimeout(() => {
+        //     this.props.hardValue(total);
+        //   }, 5);
+        //   setTimeout(() => {
+        //     this.props.hardValue(0);
+        //   }, 500);
+        //   // this.checkActivity()
+        // } else {
+        // console.log('else wali')
+        setTimeout(() => {
+          this.props.hardValue(value);
+        }, 5);
+        setTimeout(() => {
+          this.props.hardValue(0);
+        }, 500);
+        // this.checkActivity()
+        // }
       } else {
         ToastAndroid.show(
           'Alert!! Wait a second press again',
@@ -350,7 +381,7 @@ export default class App extends Component {
         );
         setTimeout(() => {
           this.setState({runningCondtion: true});
-        }, 1500);
+        }, 2000);
         // Alert.alert('Alert!!', 'Wait A Second Press Again', [
         //   {
         //     text: 'Okay',
@@ -362,13 +393,15 @@ export default class App extends Component {
   countRound = () => {
     if (this.state.isShow == true && this.state.emomCondition == false) {
       if (this.state.runningCondtion == true) {
-        this.setState({runningCondtion: false});
+        console.log(clc.xterm(172)('Reset Temp'));
+        RNSerialport.writeString('N');
+        this.setState({runningCondtion: false, temp: 1});
         setTimeout(() => {
           this.setState({runningCondtion: true});
         }, 1500);
-        this.props.countRound(!this.state.clearData);
+        this.props.countRound(true);
         setTimeout(() => {
-          this.props.countRound(this.state.clearData);
+          this.props.countRound(false);
         }, 200);
       }
     }

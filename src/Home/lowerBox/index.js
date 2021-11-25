@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -25,7 +25,7 @@ import {
   TextInput,
   Animated,
   Keyboard,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import {
@@ -36,31 +36,33 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import style from './style';
-import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import LinearGradient from 'react-native-linear-gradient';
 import Swiper from 'react-native-swiper';
-import { selectActivity } from '../../Store/actions/program';
-import { store } from '../../Store';
-import { IconToggle, Icon } from 'react-native-material-ui';
+import {selectActivity} from '../../Store/actions/program';
+import {store} from '../../Store';
+import {IconToggle, Icon} from 'react-native-material-ui';
 import Activity from './activities/index';
 import Reps from './reps/index';
 import Run from 'react-native-vector-icons/MaterialCommunityIcons';
-import { actiData1, actiData2, actiData3 } from './activities/activityData';
+import {actiData1, actiData2, actiData3} from './activities/activityData';
 import Modal from 'react-native-modal';
-import { activity } from '../../config/activities';
-import { reps } from '../../config/reps';
+import {activity} from '../../config/activities';
+import {reps} from '../../config/reps';
 import Plus from 'react-native-vector-icons/Entypo';
-import { Fonts } from '../../utils/fonts';
-import { getTheEmomMinute } from './getTheEmomMinute';
+import {Fonts} from '../../utils/fonts';
+import {getTheEmomMinute} from './getTheEmomMinute';
 import Carousel from 'react-native-snap-carousel';
-import { criteria1 } from '../../config/criteria1';
-import { Searchbar } from 'react-native-paper';
+import {criteria1} from '../../config/criteria1';
+import {Searchbar} from 'react-native-paper';
 
-import { selectTheGirls } from '../../Store/actions/theGirls';
-const { height, width } = Dimensions.get('window');
+import {selectTheGirls} from '../../Store/actions/theGirls';
+import clc from 'cli-color';
+import {RNSerialport} from 'react-native-serialport';
+const {height, width} = Dimensions.get('window');
 let carouselRef;
 let flatListRef;
-let carouselWidth = width * .01;
+let carouselWidth = width * 0.01;
 
 const rest = [
   {
@@ -193,27 +195,27 @@ export default class App extends Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.circle == true) {
     }
-    this.setState({ circle: nextProps.circle, hardValue: nextProps.hardValue });
+    this.setState(
+      {circle: nextProps.circle, hardValue: nextProps.hardValue},
+      () => {
+        if (nextProps.hardValue < 1 || nextProps.hardValue > 30) {
+        } else {
+          this.changeActivityColor();
+        }
+      },
+    );
     // this.setState({hardValue:nextProps.hardValue});
-    if (nextProps.hardValue < 1 || nextProps.hardValue > 30) {
-    } else {
-      setTimeout(() => {
-        this.changeActivityColor();
-      }, 20);
-    }
-
   }
 
   handleActivity = (child) => {
-    this.setState({ value: child });
+    this.setState({value: child});
   };
 
   handleActivityRound = (child) => {
-    this.setState({ activityRound: child });
+    this.setState({activityRound: child});
   };
 
   componentDidMount() {
-
     // console.log(this.state.dataAct.map(element => element.name),'Data act ka batao')
     // console.log(this.props.receiveDataFromChild,'Data act ka batao')
     this.handleFilterCriteria(store.getState()?.program.target);
@@ -234,7 +236,7 @@ export default class App extends Component {
     //   // this.setState({
     //   //   dataAct: ,
     //   // });
-    //   // const newActTaker; 
+    //   // const newActTaker;
 
     //   // setTimeout(() => {
     //   // this.setState({ activity: this.state.dataAct.map(element => element.name) })
@@ -245,14 +247,12 @@ export default class App extends Component {
     // });
   }
 
-
   kchKrYaar = () => {
     this.unsubscribe = store.subscribe(() => {
-
       // console.log(this.state.dataAct, 'Data act ka batao kb chala')
       this.handleFilterCriteria(store.getState().program.value);
 
-      let { acvitivies } = store.getState().theGirls;
+      let {acvitivies} = store.getState().theGirls;
 
       this.setState({
         dataActivity1: acvitivies ? acvitivies : store.getState().theGirls,
@@ -260,21 +260,21 @@ export default class App extends Component {
       // this.setState({
       //   dataAct: ,
       // });
-      // const newActTaker; 
+      // const newActTaker;
       // if (this.state.activitypassed == false && this.props.activitypassed == true) {
       //   // setTimeout(() => {
       //   this.setState({ activity: store.getState().theGirls.acvitivies.map(element => element.name) })
       //   this.props.activity(this.state.activity)
       setTimeout(() => {
         // console.log(this.state.dataActivity1, 'state activity batao')
-        this.setState({ activity: this.state.dataActivity1.map(element => element.name) })
-        this.props.activity(this.state.activity)
+        this.setState({
+          activity: this.state.dataActivity1.map((element) => element.name),
+        });
+        this.props.activity(this.state.activity);
         // console.log(this.state.activity.length, 'activity batao')
       }, 10);
     });
-  }
-
-
+  };
 
   // componentWillUnmount() {
   //   this.setState({ activity: [] })
@@ -286,11 +286,11 @@ export default class App extends Component {
   // }
   changeLayoutMeter = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
-    this.setState({ meter: !this.state.meter });
+    this.setState({meter: !this.state.meter});
   };
   toggleModal = () => {
     if (this.state.isModalVisible == false) {
-      this.setState({ restView: false, reps: false, meter: false });
+      this.setState({restView: false, reps: false, meter: false});
     } else {
       this.setState({
         isModalVisible: !this.state.isModalVisible,
@@ -308,15 +308,15 @@ export default class App extends Component {
     activity.filter((v) => {
       if (v.target == key) {
         dataActivity.push(v);
-        this.setState({ dataActivity });
-        this.setState({ masterDataActivity: dataActivity })
+        this.setState({dataActivity});
+        this.setState({masterDataActivity: dataActivity});
       }
     });
     let dataReps = [];
     reps.filter((v) => {
       if (v.target == key) {
         dataReps.push(v);
-        this.setState({ dataReps });
+        this.setState({dataReps});
       }
     });
   }
@@ -326,29 +326,28 @@ export default class App extends Component {
       // Inserted text is not blank
       // Filter the masterDataSource
       // Update FilteredDataSource
-      const newData = this.state.masterDataActivity.filter(
-        function (item) {
-          const itemData = item.value
-            ? item.value.toUpperCase()
-            : ''.toUpperCase();
-          const textData = text.toUpperCase();
-          return itemData.indexOf(textData) > -1;
-        });
+      const newData = this.state.masterDataActivity.filter(function (item) {
+        const itemData = item.value
+          ? item.value.toUpperCase()
+          : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
       if (newData.length == 0) {
-        Keyboard.dismiss()
-        this.setState({ isDataNull: true })
+        Keyboard.dismiss();
+        this.setState({isDataNull: true});
       } else {
-        this.setState({ isDataNull: false })
+        this.setState({isDataNull: false});
       }
-      this.setState({ dataActivity: newData })
-      this.setState({ search: text })
+      this.setState({dataActivity: newData});
+      this.setState({search: text});
       // setFilteredDataSource(newData);
       // setSearch(text);
     } else {
       // Inserted text is blank
       // Update FilteredDataSource with masterDataSource
-      this.setState({ dataActivity: this.state.masterDataActivity })
-      this.setState({ search: text })
+      this.setState({dataActivity: this.state.masterDataActivity});
+      this.setState({search: text});
       // setFilteredDataSource(masterDataSource);
       // setSearch(text);
     }
@@ -360,44 +359,44 @@ export default class App extends Component {
       reps: this.state.nameReps,
       color: 'black',
     });
-    this.setState({ dataActivity1: allData });
+    this.setState({dataActivity1: allData});
     setTimeout(() => {
       var a = this.state.dataActivity1.length;
       var b = this.state.emomMinutes;
       var total = b - a;
-      this.setState({ remaingRestValue: total, maxValue: '' });
+      this.setState({remaingRestValue: total, maxValue: ''});
     }, 20);
   };
   handleSelectProgram = (item) => {
     store.dispatch(selectActivity(item));
-    this.setState({ isModalVisible: !this.state.isModalVisible });
+    this.setState({isModalVisible: !this.state.isModalVisible});
   };
   setInputText = (name) => {
-    this.setState({ inputText: name });
+    this.setState({inputText: name});
   };
 
   setEditedItem = (index) => {
-    this.setState({ editedItem: index });
+    this.setState({editedItem: index});
   };
   handleEditItem = (value) => {
-    let { activityRound } = this.state;
-    this.setState({ onpressCondition: true });
+    let {activityRound} = this.state;
+    this.setState({onpressCondition: true});
     if (value == '') {
       alert('First Select The Activity');
     } else if (value == 'Add+') {
-      this.setState({ addActivity: true });
+      this.setState({addActivity: true});
     } else if (value == 'Rest') {
-      this.setState({ nameActivity: value, restView: true });
+      this.setState({nameActivity: value, restView: true});
       this.changeLayoutMeter();
     } else {
-      this.setState({ nameActivity: value, reps: true });
+      this.setState({nameActivity: value, reps: true});
       this.state.activity.push(value);
       this.changeLayoutMeter();
     }
   };
   handleEditReps = (value) => {
-    this.setState({ onpressCondition: false });
-    let { activityRound, circle, nameActivity } = this.state;
+    this.setState({onpressCondition: false});
+    let {activityRound, circle, nameActivity} = this.state;
     if (nameActivity == 'Rest') {
       // Rest Time 2
       if (value == 2) {
@@ -410,15 +409,15 @@ export default class App extends Component {
         }, 10);
         let allData = this.state.dataActivity1.slice();
         allData.push(
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
         );
-        this.setState({ dataActivity1: allData, isModalVisible: false });
+        this.setState({dataActivity1: allData, isModalVisible: false});
         setTimeout(() => {
           var a = this.state.dataActivity1.length;
           var b = this.state.emomMinutes;
           var total = b - a;
-          this.setState({ remaingRestValue: total });
+          this.setState({remaingRestValue: total});
           setTimeout(() => {
             this.toggleModal();
           }, 200);
@@ -438,16 +437,16 @@ export default class App extends Component {
         }, 20);
         let allData = this.state.dataActivity1.slice();
         allData.push(
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
         );
-        this.setState({ dataActivity1: allData, isModalVisible: false });
+        this.setState({dataActivity1: allData, isModalVisible: false});
         setTimeout(() => {
           var a = this.state.dataActivity1.length;
           var b = this.state.emomMinutes;
           var total = b - a;
-          this.setState({ remaingRestValue: total });
+          this.setState({remaingRestValue: total});
           setTimeout(() => {
             this.toggleModal();
           }, 200);
@@ -468,17 +467,17 @@ export default class App extends Component {
         }, 20);
         let allData = this.state.dataActivity1.slice();
         allData.push(
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
         );
-        this.setState({ dataActivity1: allData, isModalVisible: false });
+        this.setState({dataActivity1: allData, isModalVisible: false});
         setTimeout(() => {
           var a = this.state.dataActivity1.length;
           var b = this.state.emomMinutes;
           var total = b - a;
-          this.setState({ remaingRestValue: total });
+          this.setState({remaingRestValue: total});
           setTimeout(() => {
             this.toggleModal();
           }, 200);
@@ -502,23 +501,23 @@ export default class App extends Component {
         }, 20);
         let allData = this.state.dataActivity1.slice();
         allData.push(
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
-          { name: nameActivity, reps: '1', color: 'black' },
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
+          {name: nameActivity, reps: '1', color: 'black'},
           // { name: "Push", reps: '1', color: 'black' },
 
           //   activity: {
           //     name: "Pull Ups", name: "Push Ups", name: "Sit-ups", name: "Squats"
           // },
         );
-        this.setState({ dataActivity1: allData, isModalVisible: false });
+        this.setState({dataActivity1: allData, isModalVisible: false});
         setTimeout(() => {
           var a = this.state.dataActivity1.length;
           var b = this.state.emomMinutes;
           var total = b - a;
-          this.setState({ remaingRestValue: total });
+          this.setState({remaingRestValue: total});
           setTimeout(() => {
             this.toggleModal();
           }, 200);
@@ -528,15 +527,15 @@ export default class App extends Component {
       else {
         this.state.activity.push(nameActivity);
         let allData = this.state.dataActivity1.slice();
-        allData.push({ name: nameActivity, reps: '1', color: 'black' });
-        this.setState({ dataActivity1: allData, isModalVisible: false }, () =>
+        allData.push({name: nameActivity, reps: '1', color: 'black'});
+        this.setState({dataActivity1: allData, isModalVisible: false}, () =>
           this.props.activity(this.state.activity),
         );
         setTimeout(() => {
           var a = this.state.dataActivity1.length;
           var b = this.state.emomMinutes;
           var total = b - a;
-          this.setState({ remaingRestValue: total });
+          this.setState({remaingRestValue: total});
           setTimeout(() => {
             this.toggleModal();
           }, 200);
@@ -573,7 +572,7 @@ export default class App extends Component {
     }
   };
   getValueSubmit = () => {
-    let { activityRound, circle, nameActivity } = this.state;
+    let {activityRound, circle, nameActivity} = this.state;
     if (this.state.maxValue == '') {
       alert('Empty Not accepted');
     } else {
@@ -598,7 +597,7 @@ export default class App extends Component {
     }
   };
   getAddActivity = () => {
-    let { activityRound, circle, nameActivity } = this.state;
+    let {activityRound, circle, nameActivity} = this.state;
     if (this.state.addActivityValue == '') {
       alert('Empty Not accepted');
     } else {
@@ -614,7 +613,7 @@ export default class App extends Component {
 
   removeRule = (e, index) => {
     e.preventDefault();
-    const { dataActivity1, remaingRestValue } = this.state;
+    const {dataActivity1, remaingRestValue} = this.state;
     dataActivity1.splice(index, 1);
     this.setState({
       dataActivity1: dataActivity1,
@@ -628,9 +627,9 @@ export default class App extends Component {
       this.props.activity(this.state.activity);
     }, 10);
   };
-  _renderMyListModal = ({ item, index }) => {
+  _renderMyListModal = ({item, index}) => {
     return (
-      <View style={{ flex: 1 }} key={index}>
+      <View style={{flex: 1}} key={index}>
         <TouchableOpacity
           style={{
             width: width * 0.7,
@@ -648,11 +647,11 @@ export default class App extends Component {
             this.state.onpressCondition == false
               ? this.handleEditItem(item.value)
               : Alert.alert('Alert!!', 'Just Press One', [
-                {
-                  text: 'Okay',
-                  onPress: () => this.setState({ onpressCondition: false }),
-                },
-              ]);
+                  {
+                    text: 'Okay',
+                    onPress: () => this.setState({onpressCondition: false}),
+                  },
+                ]);
           }}>
           <Text
             style={{
@@ -667,9 +666,9 @@ export default class App extends Component {
       </View>
     );
   };
-  _renderMyListModalReps = ({ item, index }) => {
+  _renderMyListModalReps = ({item, index}) => {
     return (
-      <View style={{ flex: 1 }} key={index}>
+      <View style={{flex: 1}} key={index}>
         <TouchableOpacity
           style={{
             width: width * 0.7,
@@ -687,11 +686,11 @@ export default class App extends Component {
             this.state.onpressCondition == true
               ? this.handleEditReps(item.value)
               : Alert.alert('Alert!!', 'Just Press One', [
-                {
-                  text: 'Okay',
-                  onPress: () => this.setState({ onpressCondition: true }),
-                },
-              ]);
+                  {
+                    text: 'Okay',
+                    onPress: () => this.setState({onpressCondition: true}),
+                  },
+                ]);
           }}>
           <Text
             style={{
@@ -706,8 +705,8 @@ export default class App extends Component {
       </View>
     );
   };
-  _renderMyListRest = ({ item, index }) => (
-    <View style={{ flex: 1 }} key={index}>
+  _renderMyListRest = ({item, index}) => (
+    <View style={{flex: 1}} key={index}>
       <TouchableOpacity
         style={{
           width: width * 0.7,
@@ -725,11 +724,11 @@ export default class App extends Component {
           this.state.onpressCondition == true
             ? this.handleEditReps(item.key)
             : Alert.alert('Alert!!', 'Just Press One', [
-              {
-                text: 'Okay',
-                onPress: () => this.setState({ onpressCondition: true }),
-              },
-            ]);
+                {
+                  text: 'Okay',
+                  onPress: () => this.setState({onpressCondition: true}),
+                },
+              ]);
         }}>
         <Text
           style={{
@@ -743,7 +742,7 @@ export default class App extends Component {
       </TouchableOpacity>
     </View>
   );
-  _renderMyList = ({ item, index }) => {
+  _renderMyList = ({item, index}) => {
     // console.log('90000', item);
     return (
       <View
@@ -821,56 +820,61 @@ export default class App extends Component {
     }
   };
   handleTimeRepInvisible = () => {
-    let { activityRound } = this.state;
-    this.setState({ isShow: true });
+    let {activityRound} = this.state;
+    this.setState({isShow: true});
     if (!this.props.amrap == 0) {
-      const { dataActivity1 } = this.state;
+      const {dataActivity1} = this.state;
       // console.log('ye wala chala amrap Lower')
       setTimeout(() => {
-        this.setState({ dataActivity1: [] });
+        this.setState({dataActivity1: []});
         setTimeout(() => {
           dataActivity1.map((item) => {
             item.color = 'black';
           });
-          this.setState({ isShow: false });
+          this.setState({isShow: false});
         }, 200);
       }, 1000 * this.props.amrap);
     }
     if (!this.props.emomMinutes == 0) {
       setTimeout(() => {
-        this.setState({ dataActivity1: [] });
+        this.setState({dataActivity1: []});
         setTimeout(() => {
-          this.setState({ isShow: false });
+          this.setState({isShow: false});
         }, 200);
       }, 1000 * this.props.emomMinutes);
     }
   };
 
   resetColorRound = () => {
-    const { index, dataActivity1 } = this.state;
-    this.carouselRef.snapToItem(1, { animated: true });
+    const {index, dataActivity1} = this.state;
+    this.carouselRef.snapToItem(1, {animated: true});
     dataActivity1.map((item) => {
       item.color = 'black';
     });
-    this.setState({ index: 0, roundCondition: true });
+    this.setState({index: 0, roundCondition: true});
     setTimeout(() => {
-      this.setState({ roundCondition: false });
+      this.setState({roundCondition: false});
     }, 200);
   };
 
   resetTheColor = () => {
-    const { index, dataActivity1 } = this.state;
+    const {index, dataActivity1} = this.state;
     if (index == dataActivity1.length) {
-      this.carouselRef.snapToItem(1, { animated: true });
+      this.carouselRef.snapToItem(1, {animated: true});
       dataActivity1.map((item) => {
         item.color = 'black';
       });
-      this.setState({ index: 0 });
+      this.setState({index: 0});
     }
   };
 
   changeActivityColor = () => {
-    let { index, dataActivity1, hardValue } = this.state;
+    let {index, dataActivity1, hardValue} = this.state;
+    console.log(
+      clc.xterm(227)(this.state.hardValue, '--------><<<<this.state.hardValue'),
+    );
+
+    console.log(clc.xterm(227)(this.state.index, '---------><<<<index lower'));
     if (dataActivity1.length == 0) {
       // console.log('lowerBox');
       null;
@@ -881,14 +885,20 @@ export default class App extends Component {
           const newData = this.state.dataActivity1[this.state.index];
           newData.color = '#0083FF';
         }, 20);
-        if (this.state.hardValue == 10 && this.state.dataActivity1.length > 10) {
+
+        if (
+          this.state.hardValue == 10 &&
+          this.state.dataActivity1.length > 10
+        ) {
           // this.carouselRef.snapToItem(10, { animated: true });
-        }
-        else if (this.state.hardValue == 20 && this.state.dataActivity1.length > 20) {
+        } else if (
+          this.state.hardValue == 20 &&
+          this.state.dataActivity1.length > 20
+        ) {
           // this.carouselRef.snapToItem(20, { animated: true });
         }
         setTimeout(() => {
-          this.setState({ index: this.state.index + 1 }, () =>
+          this.setState({index: this.state.index + 1}, () =>
             this.props.hardValueDone(true),
           );
         }, 50);
@@ -897,27 +907,34 @@ export default class App extends Component {
         this.resetTheColor();
       }, 3000);
     } else {
-      console.log(this.props.hardValue, 'hard value lower')
-      console.log(index, 'index lower')
-      if (this.props.hardValue - 1 == this.state.index) {
+      // console.log(this.props.hardValue, 'hard value lower');
+      // console.log(index, 'index lower');
+      if (this.state.hardValue - 1 == this.state.index) {
         setTimeout(() => {
-        const newData = this.state.dataActivity1[this.state.index];
+          const newData = this.state.dataActivity1[this.state.index];
           // console.log(newData.color, 'Color')
           newData.color = '#0083FF';
         }, 20);
-        if (this.props.hardValue == 10 && this.state.dataActivity1.length > 10) {
-          this.carouselRef.snapToItem(10, { animated: true });
+        if (
+          this.state.hardValue == 10 &&
+          this.state.dataActivity1.length > 10
+        ) {
+          this.carouselRef.snapToItem(10, {animated: true});
         }
         // else if (this.state.hardValue == 12 && dataActivity1.length > 10) {
         //   this.carouselRef.snapToItem(1, { animated: true });
         // }
-        else if (this.props.hardValue == 20 && this.state.dataActivity1.length > 20) {
+        else if (
+          this.state.hardValue == 20 &&
+          this.state.dataActivity1.length > 20
+        ) {
           // this.carouselRef.snapToItem(20, { animated: true });
         }
         setTimeout(() => {
-          this.setState({ index: this.state.index + 1 })
-          this.props.hardValueDone(true)
+          this.setState({index: this.state.index + 1});
+          this.props.hardValueDone(true);
         }, 50);
+        RNSerialport.writeString('ACK');
       }
       setTimeout(() => {
         this.resetTheColor();
@@ -925,40 +942,42 @@ export default class App extends Component {
     }
   };
   render() {
-    console.log(this.state.dataActivity1, 'dataActivity1 lower')
+    // console.log(this.state.dataActivity1, 'dataActivity1 lower');
     // console.log(criteria1.target, 'length lower')
     if (this.state.activity.length == 0) {
-      carouselWidth = width * 0.01
+      carouselWidth = width * 0.01;
     }
     if (this.state.activity.length !== 0) {
       if (this.state.activity.length > 10) {
-        carouselWidth = width * 0.86
-      }
-      else {
-        carouselWidth = (this.state.activity.length * 0.085 + 0.01) * width
+        carouselWidth = width * 0.86;
+      } else {
+        carouselWidth = (this.state.activity.length * 0.085 + 0.01) * width;
       }
       // carouselWidth = width * 0.265
     }
-    if (this.state.activitypassed == false && this.props.activitypassed == true) {
-      // console.log('console')
+    if (
+      this.state.activitypassed == false &&
+      this.props.activitypassed == true
+    ) {
       if (this.props.activitypassed == true) {
-        this.kchKrYaar()
-        this.setState({ activitypassed: true })
+        // console.log('console-->');
+        this.kchKrYaar();
+        this.setState({activitypassed: true});
       }
     }
 
     if (!this.props.emomMinutes == 0 && this.state.emomCondition == false) {
       const data = getTheEmomMinute(this.props);
       data > 30
-        ? this.setState({ emomMinutes: 30, remaingRestValue: 30 })
-        : this.setState({ emomMinutes: data, remaingRestValue: data });
-      this.setState({ emomCondition: true });
+        ? this.setState({emomMinutes: 30, remaingRestValue: 30})
+        : this.setState({emomMinutes: data, remaingRestValue: data});
+      this.setState({emomCondition: true});
       setTimeout(() => {
         this.props.emomMinutesRange(data);
       }, 100);
 
       setTimeout(() => {
-        this.setState({ emomCondition: false, remaingRestValue: 0 });
+        this.setState({emomCondition: false, remaingRestValue: 0});
       }, 1000 * this.props.emomMinutes + 10 * 1000);
     }
     if (this.props.playOnOrOff == true && this.state.isShow == false) {
@@ -966,15 +985,18 @@ export default class App extends Component {
         this.handleTimeRepInvisible();
       }, 100);
     }
-    if (this.props.roundCondition == true && this.state.roundCondition == false) {
+    if (
+      this.props.roundCondition == true &&
+      this.state.roundCondition == false
+    ) {
       this.resetColorRound();
     }
     if (this.props.clearData == true) {
-      carouselWidth = width * 0.01
+      carouselWidth = width * 0.01;
       // this.carouselRef.snapToItem(0, (animated = true));
     }
     if (this.props.clearData == true && this.state.clearData == false) {
-      const { index, dataActivity1 } = this.state;
+      const {index, dataActivity1} = this.state;
       this.state.dataActivity1.map((item) => {
         item.color = 'black';
       });
@@ -991,39 +1013,50 @@ export default class App extends Component {
         remaingRestValue: 0,
       });
       setTimeout(() => {
-        this.setState({ clearData: false });
+        this.setState({clearData: false});
       }, 100);
     }
-    if (this.props.forTimeRoundCon == true && this.state.forTimeRoundCon == false) {
+    if (
+      this.props.forTimeRoundCon == true &&
+      this.state.forTimeRoundCon == false
+    ) {
       // this.carouselRef.snapToItem(0, (animated = true));
-      this.setState({ forTimeRoundCon: true, isShow: false, dataActivity1: [] });
+      this.setState({forTimeRoundCon: true, isShow: false, dataActivity1: []});
       setTimeout(() => {
-        this.setState({ forTimeRoundCon: false });
+        this.setState({forTimeRoundCon: false});
       }, 100);
     }
     if (this.props.stop == true && this.state.stop == false) {
-      this.setState({ stop: true })
+      this.setState({stop: true});
       this.state.dataActivity1.map((item) => {
         item.color = 'black';
       });
-      this.setState({ isShow: false, dataActivity1: [] });
+      this.setState({isShow: false, dataActivity1: []});
       setTimeout(() => {
-        this.setState({ stop: false })
+        this.setState({stop: false});
       }, 50);
     }
-    const { dataActivity, dataReps, emomMinutes, remaingRestValue } = this.state;
+    const {dataActivity, dataReps, emomMinutes, remaingRestValue} = this.state;
     // console.log(this.state.emomMinutes, 'hardValueLower')
     // console.log(this.state.forTimeRoundCon, 'clear pr chala')
     // console.log(this.props, 'isActivityVisible')
 
     return (
       <View>
-        <View style={[style.lowerContainer,{
-          height: this.props.fullScreen ? 0 : height * 0.28
-        }]}>
-          <View style={[style.lowerInner,{
-            height: this.props.fullScreen ? 0 : height * 0.26
-          }]}>
+        <View
+          style={[
+            style.lowerContainer,
+            {
+              height: this.props.fullScreen ? 0 : height * 0.28,
+            },
+          ]}>
+          <View
+            style={[
+              style.lowerInner,
+              {
+                height: this.props.fullScreen ? 0 : height * 0.26,
+              },
+            ]}>
             <View style={styles.slide1}>
               <View
                 style={{
@@ -1033,7 +1066,10 @@ export default class App extends Component {
                   alignItems: 'center',
                   // backgroundColor: 'red',
                   // justifyContent: 'center',
-                  marginLeft: this.props.circle || this.state.dataActivity1.length == 30 ? width * 0.045 : width * 0.,
+                  marginLeft:
+                    this.props.circle || this.state.dataActivity1.length == 30
+                      ? width * 0.045
+                      : width * 0,
                 }}>
                 {/* <View
                   style={{
@@ -1163,16 +1199,15 @@ export default class App extends Component {
                   /> */}
                 </View>
                 {this.state.dataActivity1.length == 30 ||
-                  (!this.props.emomMinutes == 0
-                    ? this.state.dataActivity1.length == this.state.emomMinutes
-                    : null) ||
-                  this.props.circle == true ? (
-
+                (!this.props.emomMinutes == 0
+                  ? this.state.dataActivity1.length == this.state.emomMinutes
+                  : null) ||
+                this.props.circle == true ? (
                   <View />
                 ) : (
                   <TouchableOpacity
                     disabled={this.props.disableBtns}
-                    onPress={() => this.setState({ isModalVisible: true })}
+                    onPress={() => this.setState({isModalVisible: true})}
                     style={{
                       width: width * 0.075,
                       height: height * 0.2,
@@ -1187,7 +1222,7 @@ export default class App extends Component {
                       name="plus"
                       size={width * 0.025}
                       color="white"
-                      style={{ marginTop: height * 0.02 }}
+                      style={{marginTop: height * 0.02}}
                     />
                     <Text
                       style={{
@@ -1233,10 +1268,19 @@ export default class App extends Component {
                     <Text style={style.modalHeading}>Select Your Activity</Text>
                     <Searchbar
                       // keyboardType={this.state.keyType}
-                      style={{ width: width * .25, borderWidth: height * .0025, borderColor: '#FF6100', backgroundColor: '#000', height: height * .08 }}
-                      inputStyle={{ color: '#FF6100', fontFamily: Fonts.VarelaRoundRegular }}
-                      iconColor='#FF6100'
-                      placeholderTextColor='#949494'
+                      style={{
+                        width: width * 0.25,
+                        borderWidth: height * 0.0025,
+                        borderColor: '#FF6100',
+                        backgroundColor: '#000',
+                        height: height * 0.08,
+                      }}
+                      inputStyle={{
+                        color: '#FF6100',
+                        fontFamily: Fonts.VarelaRoundRegular,
+                      }}
+                      iconColor="#FF6100"
+                      placeholderTextColor="#949494"
                       placeholder="Type Here..."
                       value={this.state.search}
                       onChangeText={(text) => this.searchFilterFunction(text)}
@@ -1385,13 +1429,13 @@ export default class App extends Component {
                     data={
                       remaingRestValue == 2
                         ? [
-                          {
-                            key: '1',
-                            value: 'Rest',
-                          },
-                        ]
+                            {
+                              key: '1',
+                              value: 'Rest',
+                            },
+                          ]
                         : remaingRestValue == 3
-                          ? [
+                        ? [
                             {
                               key: '1',
                               value: 'Rest',
@@ -1401,62 +1445,62 @@ export default class App extends Component {
                               value: 'Rest',
                             },
                           ]
-                          : remaingRestValue == 4
-                            ? [
-                              {
-                                key: '1',
-                                value: 'Rest',
-                              },
-                              {
-                                key: '2',
-                                value: 'Rest',
-                              },
-                              {
-                                key: '3',
-                                value: 'Rest',
-                              },
-                            ]
-                            : remaingRestValue == 5
-                              ? [
-                                {
-                                  key: '1',
-                                  value: 'Rest',
-                                },
-                                {
-                                  key: '2',
-                                  value: 'Rest',
-                                },
-                                {
-                                  key: '3',
-                                  value: 'Rest',
-                                },
-                                {
-                                  key: '4',
-                                  value: 'Rest',
-                                },
-                              ]
-                              : [
-                                {
-                                  key: '1',
-                                  value: 'Rest',
-                                },
-                                {
-                                  key: '2',
-                                  value: 'Rest',
-                                },
-                                {
-                                  key: '3',
-                                  value: 'Rest',
-                                },
-                                {
-                                  key: '4',
-                                  value: 'Rest',
-                                },
-                                {
-                                  key: '5',
-                                  value: 'Rest',
-                                },
-                              ]
+                        : remaingRestValue == 4
+                        ? [
+                            {
+                              key: '1',
+                              value: 'Rest',
+                            },
+                            {
+                              key: '2',
+                              value: 'Rest',
+                            },
+                            {
+                              key: '3',
+                              value: 'Rest',
+                            },
+                          ]
+                        : remaingRestValue == 5
+                        ? [
+                            {
+                              key: '1',
+                              value: 'Rest',
+                            },
+                            {
+                              key: '2',
+                              value: 'Rest',
+                            },
+                            {
+                              key: '3',
+                              value: 'Rest',
+                            },
+                            {
+                              key: '4',
+                              value: 'Rest',
+                            },
+                          ]
+                        : [
+                            {
+                              key: '1',
+                              value: 'Rest',
+                            },
+                            {
+                              key: '2',
+                              value: 'Rest',
+                            },
+                            {
+                              key: '3',
+                              value: 'Rest',
+                            },
+                            {
+                              key: '4',
+                              value: 'Rest',
+                            },
+                            {
+                              key: '5',
+                              value: 'Rest',
+                            },
+                          ]
                     }
                     renderItem={(item, index) =>
                       this._renderMyListRest(item, index)
@@ -1506,7 +1550,7 @@ export default class App extends Component {
                 placeholder="Type Here"
                 keyboardType="number-pad"
                 placeholderTextColor="gray"
-                onChangeText={(e) => this.setState({ maxValue: e })}
+                onChangeText={(e) => this.setState({maxValue: e})}
                 style={{
                   color: 'white',
                   width: width * 0.2,
@@ -1532,12 +1576,12 @@ export default class App extends Component {
                 <View
                   style={[
                     styles.selectTimeBotton,
-                    { backgroundColor: '#FF6100' },
+                    {backgroundColor: '#FF6100'},
                   ]}>
                   <Text
                     style={[
                       styles.modalHeading,
-                      { color: 'white', fontSize: height * 0.025 },
+                      {color: 'white', fontSize: height * 0.025},
                     ]}>
                     Done
                   </Text>
@@ -1584,7 +1628,7 @@ export default class App extends Component {
               <TextInput
                 placeholder="Type Here"
                 placeholderTextColor="gray"
-                onChangeText={(e) => this.setState({ addActivityValue: e })}
+                onChangeText={(e) => this.setState({addActivityValue: e})}
                 style={{
                   color: 'white',
                   width: width * 0.2,
@@ -1610,12 +1654,12 @@ export default class App extends Component {
                 <View
                   style={[
                     styles.selectTimeBotton,
-                    { backgroundColor: '#FF6100' },
+                    {backgroundColor: '#FF6100'},
                   ]}>
                   <Text
                     style={[
                       styles.modalHeading,
-                      { color: 'white', fontSize: height * 0.025 },
+                      {color: 'white', fontSize: height * 0.025},
                     ]}>
                     Done
                   </Text>

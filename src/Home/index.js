@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -29,6 +29,9 @@ import style from './style';
 import SystemSetting from 'react-native-system-setting';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import BleManager from 'react-native-ble-manager';
+import RNBluetoothClassic, {
+  BluetoothDevice,
+} from 'react-native-bluetooth-classic';
 import Buffer from 'buffer';
 import RNFS from 'react-native-fs';
 // import {AnimatedCircularProgress} from 'react-native-circular-progress';
@@ -49,16 +52,18 @@ import Calculator2 from './Calculator/index';
 import HardwereBotton from './HardwereBotton/index';
 import SettingsModal from '../component/settingsModal';
 import SetPinModal from '../component/setPinModal';
-import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
-import { Icon } from 'react-native-material-ui';
+import {CountdownCircleTimer} from 'react-native-countdown-circle-timer';
+import {Icon} from 'react-native-material-ui';
 import Cal from 'react-native-vector-icons/MaterialCommunityIcons';
 import Human from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Fonts } from '../utils/fonts';
+import {RNSerialport} from 'react-native-serialport';
+import {Fonts} from '../utils/fonts';
 import RNBeep from 'react-native-a-beep';
+import {bytesToString} from 'convert-string';
 
-import { Calculator } from 'react-native-calculator';
+import {Calculator} from 'react-native-calculator';
 import Modal from 'react-native-modal';
-import { circIn } from 'eases';
+import {circIn} from 'eases';
 
 let currentTime;
 const Sound = require('react-native-sound');
@@ -67,7 +72,7 @@ let song = new Sound('beep.mp3', Sound.MAIN_BUNDLE, (error) => {
     console.log('Error while initializing song instance', error);
   }
 });
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -131,6 +136,7 @@ export default class App extends Component {
       imageUri: '',
       fullScreen: false,
       showFullScreen: false,
+      bleMacId: '',
       settingData: [
         {
           key: '1',
@@ -145,7 +151,7 @@ export default class App extends Component {
         {
           key: '3',
           name: 'Settings',
-          value: 'Wireless Clicker',
+          value: 'Smart Connect',
           note: 'Note: Only one clicker can be paired',
         },
         {
@@ -203,12 +209,12 @@ export default class App extends Component {
         },
         {
           key: '1',
-          name: 'Wireless Clicker',
+          name: 'Smart Connect',
           value: 'New Clicker',
         },
         {
           key: '2',
-          name: 'Wireless Clicker',
+          name: 'Smart Connect',
           value: 'Unpair Clicker',
         },
         {
@@ -249,11 +255,11 @@ export default class App extends Component {
     BleManager.enableBluetooth()
       .then(() => {
         console.log('The bluetooth is already enabled or the user confirmed');
-        this.setState({ blueE: true });
-        BleManager.start().then(() => {
-          // Success code
-          console.log('Module initialized');
-        });
+        this.setState({blueE: true});
+        // BleManager.start().then(() => {
+        //   // Success code
+        //   console.log('Module initialized');
+        // });
       })
       .catch(() => {
         Alert.alert(
@@ -317,7 +323,7 @@ export default class App extends Component {
           results['android.permission.ACCESS_FINE_LOCATION'] &&
           results['android.permission.ACCESS_COARSE_LOCATION'] === 'granted'
         ) {
-          this.setState({ permissionEnabled: true });
+          this.setState({permissionEnabled: true});
           this.createFile();
         } else if (
           (results['android.permission.ACCESS_FINE_LOCATION'] &&
@@ -328,7 +334,7 @@ export default class App extends Component {
             results['android.permission.CAMERA'] &&
             results['android.permission.READ_EXTERNAL_STORAGE'] &&
             results['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-            'never_ask_again')
+              'never_ask_again')
         ) {
           ToastAndroid.show(
             'App cannot Start Without Accepting Permission',
@@ -350,10 +356,10 @@ export default class App extends Component {
       // console.log('Current Wifi is ' + this.state.onOff);
       if (this.state.onOff == 'On') {
         ToastAndroid.show('Wifi is Connected', ToastAndroid.SHORT);
-        this.setState({ blueOpt: true });
+        this.setState({blueOpt: true});
       } else {
         this.toggleWifi();
-        this.setState({ blueOpt: false });
+        this.setState({blueOpt: false});
       }
       // this.checkWifi()
       // console.log(this.state.blueOpt)
@@ -364,6 +370,12 @@ export default class App extends Component {
     SystemSetting.switchWifi(() => {
       console.log('switch Wifi successfully');
     });
+  };
+
+  //handle new Activity send to Device
+  handleSend = () => {
+    console.log('New Activity Started');
+    RNSerialport.writeString('N');
   };
 
   // PLay Timer
@@ -378,8 +390,10 @@ export default class App extends Component {
       } else if (this.state.activity.length == 0) {
         alert('Please Select Activity');
       } else if (!this.state.forTimeRound == 0) {
+        // this.handleSend();
+
         setTimeout(() => {
-          this.setState({ onPlaying: !this.state.onPlaying });
+          this.setState({onPlaying: !this.state.onPlaying});
         }, 10 * 1000 + 500);
         this.setState({
           uniqueValue: this.state.uniqueValue + 1,
@@ -395,8 +409,9 @@ export default class App extends Component {
         }, 1000 * this.state.duration - 3000);
       } else if (!this.state.amrapTime == 0) {
         // console.log('ye wala ager chhala to')
+        this.handleSend();
         setTimeout(() => {
-          this.setState({ onPlaying: true });
+          this.setState({onPlaying: true});
           RNBeep.beep(false);
         }, 10 * 1000 + 500);
         this.setState({
@@ -414,7 +429,7 @@ export default class App extends Component {
         setTimeout(() => {
           this.setState({
             onPlaying: false,
-            showFullScreen:true,
+            showFullScreen: true,
             // uniqueValue: this.state.uniqueValue + 1,
             // circle: false,
             totalTime: 0,
@@ -426,8 +441,9 @@ export default class App extends Component {
           });
         }, this.state.amrapTime * 1000 + 10 * 1000);
       } else if (!this.state.emomMinutes == 0) {
+        this.handleSend();
         setTimeout(() => {
-          this.setState({ onPlaying: !this.state.onPlaying });
+          this.setState({onPlaying: !this.state.onPlaying});
         }, 10 * 1000 + 500);
         this.setState({
           uniqueValue: this.state.uniqueValue + 1,
@@ -444,7 +460,7 @@ export default class App extends Component {
         setTimeout(() => {
           this.setState({
             onPlaying: false,
-            showFullScreen:true,
+            showFullScreen: true,
             // circle: false,
             programCondition: false,
             totalTime: 0,
@@ -456,8 +472,9 @@ export default class App extends Component {
         }, this.state.emomMinutes * 1000 + 10 * 1000);
       }
     } else {
+      this.handleSend();
       setTimeout(() => {
-        this.setState({ onPlaying: !this.state.onPlaying });
+        this.setState({onPlaying: !this.state.onPlaying});
       }, 10 * 1000 + 500);
       this.setState({
         uniqueValue: this.state.uniqueValue + 1,
@@ -474,7 +491,7 @@ export default class App extends Component {
     }
   };
 
-  _renderSettingList = ({ item }) => (
+  _renderSettingList = ({item}) => (
     <TouchableOpacity onPress={() => this.filterList(item)}>
       <View
         style={{
@@ -498,7 +515,7 @@ export default class App extends Component {
     </TouchableOpacity>
   );
 
-  _renderInnerSettingList = ({ item }) => (
+  _renderInnerSettingList = ({item}) => (
     <TouchableOpacity onPress={() => this.DoSetting(item)}>
       <View
         style={{
@@ -522,7 +539,7 @@ export default class App extends Component {
     </TouchableOpacity>
   );
 
-  _renderBTList = ({ item }) => {
+  _renderBTList = ({item}) => {
     return (
       <TouchableOpacity onPress={() => this.connectBTDevice(item)}>
         <View
@@ -530,6 +547,7 @@ export default class App extends Component {
             borderBottomWidth: height * 0.002,
             borderColor: '#EDB0A6',
             width: width * 0.32,
+            // backgroundColor: 'yellow',
             paddingHorizontal: width * 0.01,
             paddingVertical: height * 0.015,
           }}>
@@ -539,7 +557,7 @@ export default class App extends Component {
               fontSize: width * 0.018,
               fontFamily: Fonts.VarelaRoundRegular,
             }}>
-            {item.name}
+            {item.name == null ? 'N/A' : item.name}
           </Text>
           <Text
             style={{
@@ -554,7 +572,7 @@ export default class App extends Component {
     );
   };
 
-  _renderBTConnectedList = ({ item }) => {
+  _renderBTConnectedList = ({item}) => {
     return (
       <TouchableOpacity onPress={() => this.disconnectBTDevice(item)}>
         <View
@@ -587,7 +605,7 @@ export default class App extends Component {
   };
 
   filterList = (key) => {
-    this.setState({ openTheKeyboard: true });
+    this.setState({openTheKeyboard: true});
     let filteredList = [];
     this.setState({
       isInnerSettingVisible: true,
@@ -597,9 +615,9 @@ export default class App extends Component {
     this.state.innerSettingData.filter((v) => {
       if (v.name == key.value) {
         filteredList.push(v);
-        this.setState({ filteredList });
+        this.setState({filteredList});
         if (key.value == 'Contact Us') {
-          this.setState({ contactVisible: true });
+          this.setState({contactVisible: true});
         }
       }
     });
@@ -631,7 +649,7 @@ export default class App extends Component {
     });
   };
 
-  DoSetting = (key) => {
+  DoSetting = async (key) => {
     if (key.value == 'Connect To Wifi') {
       this.checkWifi();
       // this.toggleWifi()
@@ -645,18 +663,32 @@ export default class App extends Component {
     } else if (key.value == 'New Clicker') {
       this.scanBTAvailDev();
     } else if (key.value == 'Unpair Clicker') {
-      this.setState({ notconnected: false });
-      setTimeout(() => {
-        if (this.state.BTConnectedDev[0] === undefined) {
-          this.setState({ notconnected: true });
+      // this.setState({notconnected: false});
+      // setTimeout(() => {
+      //   if (this.state.BTConnectedDev[0] === undefined) {
+      //     this.setState({notconnected: true});
+      //   }
+      // }, 100);
+      try {
+        this.setState({notconnected: false});
+        let peripheralsArray = await RNBluetoothClassic.getConnectedDevices();
+        if (peripheralsArray.length == 0) {
+          this.setState({notconnected: true});
+          console.log('no connected devices found');
+        } else {
+          console.log('lolo', peripheralsArray);
+          this.setState({BTConnectedDev: peripheralsArray});
+          this.setState({notconnected: false});
         }
-      }, 100);
-      BleManager.getConnectedPeripherals([]).then((peripheralsArray) => {
-        // Success code
-        console.log('Connected peripherals: ' + peripheralsArray.length);
-        this.setState({ BTConnectedDev: peripheralsArray });
-      });
-      this.setState({ BTConnectDevModal: true });
+      } catch (e) {
+        console.log('Error while GetConnected', e);
+      }
+      // BleManager.getConnectedPeripherals([]).then((peripheralsArray) => {
+      //   // Success code
+      //   console.log('Connected peripherals: ' + peripheralsArray.length);
+      //   this.setState({BTConnectedDev: peripheralsArray});
+      // });
+      this.setState({BTConnectDevModal: true});
     } else if (key.value == 'Setup Bootup Pin') {
       this.setState({
         setPin: true,
@@ -670,103 +702,187 @@ export default class App extends Component {
     }
   };
 
-  scanBTAvailDev = () => {
-    this.setState({ notfound: false, isloading: true, BTAvailDevModal: true });
-    BleManager.scan([], 10, true).then(() => {
-      // Success code
-      console.log('Scan started');
+  scanBTAvailDev = async () => {
+    this.setState({
+      notfound: false,
+      isloading: true,
+      BTAvailDevModal: true,
+      BTDev: [],
     });
-    setTimeout(() => {
-      BleManager.getDiscoveredPeripherals([]).then((peripheralsArray) => {
-        // Success code
-        console.log('Discovered peripherals: ' + peripheralsArray.length);
-        this.setState({ BTDev: peripheralsArray });
-        this.setState({ isloading: false });
-        if (this.state.BTDev[0] === undefined) {
-          this.setState({ notfound: true });
-        }
+    try {
+      let unpaired = await RNBluetoothClassic.startDiscovery();
+      console.log('devices', unpaired);
+      this.setState({BTDev: unpaired});
+      this.setState({isloading: false});
+      if (this.state.BTDev[0] === undefined) {
+        this.setState({notfound: true});
+      }
+    } catch (error) {
+      console.log('err', error);
+    }
+    // BleManager.scan([], 10, true).then(() => {
+    //   // Success code
+    //   console.log('Scan started');
+    // });
+    // setTimeout(() => {
+    //   BleManager.getDiscoveredPeripherals([]).then((peripheralsArray) => {
+    //     // Success code
+    //     console.log('Discovered peripherals: ' + peripheralsArray.length);
+    //     this.setState({BTDev: peripheralsArray});
+    //     this.setState({isloading: false});
+    //     if (this.state.BTDev[0] === undefined) {
+    //       this.setState({notfound: true});
+    //     }
+    //   });
+    // }, 4000);
+  };
+
+  pairDevice = (item) => {
+    RNBluetoothClassic.pairDevice(item.id)
+      .then((device) => {
+        console.log('Paired Device', device);
+        this.setState({bleMacId: item.id});
+        ToastAndroid.show('Connected Successfully', ToastAndroid.SHORT);
+      })
+      .catch((e) => {
+        console.log('Error while pairing Device', e);
       });
-    }, 4000);
+  };
+
+  unPairDevice = (item) => {
+    RNBluetoothClassic.unpairDevice(item.id)
+      .then((state) => {
+        console.log('unPaired Device', state);
+        this.setState({bleMacId: '', notconnected: true});
+        ToastAndroid.show('Disconnected', ToastAndroid.SHORT);
+      })
+      .catch((e) => {
+        console.log('Error while unpairing', e);
+      });
   };
 
   connectBTDevice = (item) => {
-    BleManager.connect(item.id)
-      .then(() => {
-        // Success code
-        console.log('Connected');
-        ToastAndroid.show('Connected', ToastAndroid.SHORT);
+    //FIXME: if Connect does not work swtich to pairing method
+    this.setState({isloading: true});
+    RNBluetoothClassic.connectToDevice(item.id)
+      .then((state) => {
+        console.log('Connected', state);
+        this.setState({bleMacId: item.id, isloading: false});
+        ToastAndroid.show('Connected Successfully', ToastAndroid.SHORT);
+        // setInterval(() => {
+        //   console.log('interval chala');
+        //   // this.retrieveBleServices(item);
+        // }, 2000);
       })
       .catch((error) => {
         // Failure code
         console.log(error);
       });
-    setInterval(() => {
-      console.log('interval chala');
-      this.fetchBTValues(item);
-    }, 2000);
-    // BleManager.retrieveServices(item.id).then((itemInfo) => {
-    //   // Success code
-    //   console.log('Peripheral info:', itemInfo);
-    //   setTimeout(() => {
-    //     BleManager.read(
-    //       itemInfo.id,
-    //       itemInfo.characteristics[4].service,
-    //       itemInfo.characteristics[4].characteristic,
-    //     )
-    //       .then((readData) => {
-    //         // Success code
-    //         console.log('Read: ' + readData);
-
-    //         // const buffer = Buffer.Buffer.from(readData); //https://github.com/feross/buffer#convert-arraybuffer-to-buffer
-    //         // const sensorData = buffer.readUInt8(1, true);
-    //       })
-    //       .catch((error) => {
-    //         // Failure code
-    //         console.log(error);
-    //       });
-    //   }, 2000);
-    // });
+    // BleManager.connect(item.id)
+    //   .then(() => {
+    //     // Success code
+    //     console.log('Connected');
+    //     this.setState({bleMacId: item.id});
+    //     ToastAndroid.show('Connected Successfully', ToastAndroid.SHORT);
+    //     setInterval(() => {
+    //       console.log('interval chala');
+    //       this.retrieveBleServices(item);
+    //       // this.ReadBle(item);
+    //     }, 2000);
+    //   })
+    //   .catch((error) => {
+    //     // Failure code
+    //     console.log(error);
+    //   });
   };
 
   disconnectBTDevice = (item) => {
-    BleManager.disconnect(item.id)
-      .then(() => {
+    //FIXME: if Disconnect does not work swtich to unPairing method
+    this.setState({isloading: true});
+    RNBluetoothClassic.disconnectFromDevice(item.id)
+      .then((state) => {
         // Success code
-        console.log('Disconnected');
+        // this.readSub.remove();
+        console.log('Reading Removed');
+        console.log('Disconnected', state);
         ToastAndroid.show('Disconnected', ToastAndroid.SHORT);
-        this.setState({ notconnected: true });
+        this.setState({notconnected: true, isloading: false});
       })
-      .catch((error) => {
+      .catch((e) => {
         // Failure code
-        console.log(error);
+        console.log(e);
+      });
+    // BleManager.disconnect(item.id)
+    //   .then(() => {
+    //     // Success code
+    //     console.log('Disconnected');
+    //     ToastAndroid.show('Disconnected', ToastAndroid.SHORT);
+    //     this.setState({notconnected: true});
+    //   })
+    //   .catch((error) => {
+    //     // Failure code
+    //     console.log(error);
+    //   });
+  };
+
+  retrieveBleServices = (item) => {
+    BleManager.retrieveServices(item.id)
+      .then((itemInfo) => {
+        console.log('Peripheral info:', itemInfo);
+      })
+      .catch((e) => {
+        console.log('Error while retrieve', e);
       });
   };
 
-  fetchBTValues = (item) => {
-    BleManager.retrieveServices(item.id).then((itemInfo) => {
-      // Success code
-      setTimeout(() => {
-        BleManager.read(
-          itemInfo.id,
-          itemInfo.characteristics[4].service,
-          itemInfo.characteristics[4].characteristic,
-        )
-          .then((readData) => {
-            // Success code
-            // console.log('Read: ' + readData);
+  onReadBlueTooth = (data) => {
+    console.log('REading...', data);
+  };
 
-            const buffer = Buffer.Buffer.from(readData); //https://github.com/feross/buffer#convert-arraybuffer-to-buffer
-            const sensorData = buffer.readUInt8(1, true);
-            console.log('Sensor Data', sensorData);
-            this.setState({ BTValues: sensorData });
-            // console.log('Buffer Data', buffer);
-          })
-          .catch((error) => {
-            // Failure code
-            console.log(error);
-          });
-      }, 2000);
-    });
+  ReadBle = () => {
+    this.readSub = RNBluetoothClassic.onDeviceRead(
+      this.state.bleMacId,
+      (data) => onReadBlueTooth(data),
+    );
+    // BleManager.read(
+    //   this.state.bleMacId,
+    //   itemInfo.characteristics[4].service, //FIXME: Change it Later to pre-definded
+    //   itemInfo.characteristics[4].characteristic, //FIXME: Change it Later to pre-definded
+    // )
+    //   .then((readData) => {
+    //     // Success code
+    //     // console.log('Read: ' + readData);
+    //     const stringData = bytesToString(readData);
+    //     this.setState({BTValues: stringData});
+    //   })
+    //   .catch((error) => {
+    //     // Failure code
+    //     console.log(error);
+    //   });
+  };
+
+  writeBle = (writeValue) => {
+    const stringData = writeValue;
+    RNBluetoothClassic.writeToDevice(this.state.bleMacId, stringData, 'utf-8')
+      .then((state) => {
+        console.log('Write Successfully', state);
+      })
+      .catch((e) => {
+        console.log('Error while write', e);
+      });
+    // const bytesData = stringToBytes(stringData);
+    // BleManager.write(
+    //   this.state.bleMacId,
+    //   'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX', //FIXME: Change it Later to pre-definded
+    //   'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX', //FIXME: Change it Later to pre-definded
+    //   bytesData,
+    // )
+    //   .then(() => {
+    //     console.log('Write: ' + stringData);
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //   });
   };
 
   createFile = () => {
@@ -794,65 +910,65 @@ export default class App extends Component {
   };
 
   handleTheGirlsCriteria = (child) => {
-    this.setState({ theGirlsCriteria: child });
+    this.setState({theGirlsCriteria: child});
   };
 
   handleMinutesTotal = (child) => {
-    this.setState({ totalTime: child });
+    this.setState({totalTime: child});
   };
   handleDisableActivity = (child) => {
     // console.log(child, 'disable activity ka child')
-    this.setState({ disableBtns: child });
+    this.setState({disableBtns: child});
   };
   handleCriteriaName = (child) => {
     // console.log(child, 'Criteria name is child')
-    this.setState({ criteriaValue: child });
+    this.setState({criteriaValue: child});
   };
   handleTime = (child) => {
-    this.setState({ amrapTime: child });
+    this.setState({amrapTime: child});
   };
   handleForTime = (child) => {
-    this.setState({ forTimeRound: child });
+    this.setState({forTimeRound: child});
     if (!child == 0) {
       setTimeout(() => {
-        this.setState({ forTimeRoundCon: true });
-        this.setState({ criteriaPassed: false });
+        this.setState({forTimeRoundCon: true});
+        this.setState({criteriaPassed: false});
         setTimeout(() => {
-          this.setState({ criteriaPassed: true });
+          this.setState({criteriaPassed: true});
         }, 1000);
       }, 200);
     }
   };
   handleActivity = (child) => {
-    this.setState({ activity: child });
+    this.setState({activity: child});
   };
   handleRoundIndex = (child) => {
-    this.setState({ roundIndex: child });
+    this.setState({roundIndex: child});
   };
   handleFullScreen = (child) => {
-    this.setState({ fullScreen: child });
+    this.setState({fullScreen: child});
   };
   handleActivityRound = (child) => {
-    let { activityRound } = this.state;
+    let {activityRound} = this.state;
     activityRound.push(child);
-    this.setState({ activityRound });
+    this.setState({activityRound});
   };
   handleTimeLap = (child) => {
-    this.setState({ timeLap: child });
+    this.setState({timeLap: child});
   };
   handlePassingMinutes = (child) => {
-    this.setState({ tabataMinutes: child });
+    this.setState({tabataMinutes: child});
     // console.log(child, 'child minutes')
   };
   handlePassingRest = (child) => {
-    this.setState({ tabataRest: child });
+    this.setState({tabataRest: child});
     // console.log(child, 'child rest')
   };
   handlePassingRound = (child) => {
-    this.setState({ tabataRounds: child });
+    this.setState({tabataRounds: child});
     if (!child == 0) {
       setTimeout(() => {
-        this.setState({ tabataRoundCon: true });
+        this.setState({tabataRoundCon: true});
         // this.setState({ criteriaPassed: false })
         // setTimeout(() => {
         //   this.setState({ criteriaPassed: true })
@@ -862,56 +978,56 @@ export default class App extends Component {
     // console.log(child, 'child round ')
   };
   countActivityWithTime = (child) => {
-    this.setState({ actCondition: child });
+    this.setState({actCondition: child});
     // console.log(child,'ye chala perfect')
     setTimeout(() => {
-      this.setState({ actCondition: false });
+      this.setState({actCondition: false});
     }, 50);
   };
   handleDataClear = (child) => {
-    this.setState({ clearData: child });
+    this.setState({clearData: child});
   };
   handleHardValue = (child) => {
-    this.setState({ hardValue: child });
+    this.setState({hardValue: child});
     console.log(this.state.hardValue, 'hardValue Home');
   };
   countRound = (child) => {
-    this.setState({ roundCondition: child });
+    this.setState({roundCondition: child});
     setTimeout(() => {
-      this.setState({ roundCondition: false });
+      this.setState({roundCondition: false});
     }, 100);
   };
   handleRoundLap = (child) => {
-    this.setState({ roundLap: child });
+    this.setState({roundLap: child});
   };
   handleTotalTimeArr = (child) => {
-    this.setState({ totalTimeArr: child });
+    this.setState({totalTimeArr: child});
   };
   handleEmom = (child) => {
-    this.setState({ emomMinutes: child });
+    this.setState({emomMinutes: child});
   };
   handleEmomMinutesShow = (child) => {
-    this.setState({ emomMinutesShow: child });
+    this.setState({emomMinutesShow: child});
   };
   handleIndexCondition = (child) => {
-    this.setState({ indexCondition: child });
+    this.setState({indexCondition: child});
   };
   handleEmomMinutesRange = (child) => {
-    this.setState({ emomMinutesRange: child });
+    this.setState({emomMinutesRange: child});
   };
   stopTimer = (child) => {
     if (this.state.indexCondition == true) {
-      this.setState({ stop: child });
+      this.setState({stop: child});
       setTimeout(() => {
-        this.setState({ stop: false });
+        this.setState({stop: false});
       }, 50);
     }
   };
   handleTabataCompleteRounds = (child) => {
-    this.setState({ tabataCompleteRounds: child });
+    this.setState({tabataCompleteRounds: child});
   };
   handleScreenShot = (child) => {
-    this.setState({ imageUri: child });
+    this.setState({imageUri: child});
   };
   render() {
     currentTime = new Date().getTime();
@@ -955,10 +1071,10 @@ export default class App extends Component {
         tabataRest: 0,
         tabataRounds: 0,
         tabataCompleteRounds: 0,
-        showFullScreen:false
+        showFullScreen: false,
       });
       setTimeout(() => {
-        this.setState({ clearDataHome: false });
+        this.setState({clearDataHome: false});
       }, 50);
     }
     if (roundIndex == forTimeRound && this.state.forTimeRoundCon == true) {
@@ -966,13 +1082,13 @@ export default class App extends Component {
         onPlaying: false,
         activity: [],
         programCondition: false,
-        showFullScreen:true,
+        showFullScreen: true,
         timeLap: [],
         forTimeRoundCon: false,
         forTimeCon: true,
       });
       setTimeout(() => {
-        this.setState({ forTimeCon: false });
+        this.setState({forTimeCon: false});
       }, 100);
     }
     if (
@@ -988,7 +1104,7 @@ export default class App extends Component {
         tabataCon: true,
       });
       setTimeout(() => {
-        this.setState({ tabataCon: false });
+        this.setState({tabataCon: false});
       }, 100);
     }
     takeSnap = () => {
@@ -1008,13 +1124,13 @@ export default class App extends Component {
           this.setState((prevState) => ({
             imageArray: [
               ...prevState.imageArray,
-              { imgURI: uri, date: new Date().toISOString() },
+              {imgURI: uri, date: new Date().toISOString()},
             ],
           }));
           // store.dispatch(
           //   snapshots({imgURI: uri, date: new Date().toISOString()}),
           // );
-          this.setState({ imageURI: uri, savedImagePath: uri }, () => {
+          this.setState({imageURI: uri, savedImagePath: uri}, () => {
             this.props.screeShot(this.state.imageArray);
           });
         },
@@ -1025,7 +1141,7 @@ export default class App extends Component {
     return (
       <ScrollView
         // onPress={() => Keyboard.dismiss()}
-        style={{ backgroundColor: 'black' }}>
+        style={{backgroundColor: 'black'}}>
         <View
           style={{
             flex: 1,
@@ -1037,9 +1153,13 @@ export default class App extends Component {
             hidden={true}
             showHideTransition={'fade'}
           />
-          <View style={[style.container, {
-            height: this.state.fullScreen ? 0 : height * 0.28
-          }]}>
+          <View
+            style={[
+              style.container,
+              {
+                height: this.state.fullScreen ? 0 : height * 0.28,
+              },
+            ]}>
             <View
               style={{
                 width: width * 0.957,
@@ -1121,7 +1241,7 @@ export default class App extends Component {
                       duration={duration}
                       colors="#0083FF"
                       trailColor="#ADADAD">
-                      {({ remainingTime, animatedColor }) =>
+                      {({remainingTime, animatedColor}) =>
                         this.state.circle == false ? (
                           <Pressable
                             onPress={this.playTimer}
@@ -1153,18 +1273,18 @@ export default class App extends Component {
                               remainingTime == 0 && !forTimeRound == 0
                                 ? 'Round\n' + roundIndex + ' / ' + forTimeRound
                                 : remainingTime == 0 && !tabataRounds == 0
-                                  ? 'Round\n' +
+                                ? 'Round\n' +
                                   tabataCompleteRounds +
                                   ' / ' +
                                   tabataRounds
-                                  : remainingTime == 0 && !emomMinutesShow == 0
-                                    ? 'Minute\n' +
-                                    (emomMinutesShow - 1) +
-                                    ' of ' +
-                                    emomMinutesRange
-                                    : remainingTime == 0
-                                      ? 'Round\n' + roundIndex
-                                      : remainingTime
+                                : remainingTime == 0 && !emomMinutesShow == 0
+                                ? 'Minute\n' +
+                                  (emomMinutesShow - 1) +
+                                  ' of ' +
+                                  emomMinutesRange
+                                : remainingTime == 0
+                                ? 'Round\n' + roundIndex
+                                : remainingTime
                               // remainingTime == 0 ? 'Round\n'+roundIndex : remainingTime + (!forTimeRound == 0 && remainingTime == 0 ? "/"+ forTimeRound : null)
                             }
                           </Animated.Text>
@@ -1231,7 +1351,7 @@ export default class App extends Component {
                         borderless: true,
                         radius: width * 0.01,
                       }}
-                      onPress={() => this.setState({ note: !this.state.note })}
+                      onPress={() => this.setState({note: !this.state.note})}
                       style={style.sliderPrContainer}>
                       <Icon
                         name={'event-note'}
@@ -1245,7 +1365,7 @@ export default class App extends Component {
                         borderless: true,
                         radius: width * 0.01,
                       }}
-                      onPress={() => this.setState({ pr: !this.state.pr })}
+                      onPress={() => this.setState({pr: !this.state.pr})}
                       style={style.sliderPrContainer}>
                       <Human
                         name={'human-handsup'}
@@ -1331,12 +1451,13 @@ export default class App extends Component {
             activity={this.state.activity}
             tabataCon={this.state.tabataCon}
             fullScreen={this.state.fullScreen}
+            deviceMacId={this.state.bleMacId}
           />
           <Modal
             animationIn="slideInDown"
             animationOut="slideOutUp"
             onBackdropPress={() =>
-              this.setState({ isModalVisible: !this.state.isModalVisible })
+              this.setState({isModalVisible: !this.state.isModalVisible})
             }
             isVisible={this.state.isModalVisible}
             // isVisible={true}
@@ -1353,7 +1474,7 @@ export default class App extends Component {
                   top: height * 0.009,
                 }}
                 onPress={() =>
-                  this.setState({ isModalVisible: !this.state.isModalVisible })
+                  this.setState({isModalVisible: !this.state.isModalVisible})
                 }>
                 <Icon
                   name={'cancel'}
@@ -1368,16 +1489,16 @@ export default class App extends Component {
           <SettingsModal
             // isVisible={true}
             isVisible={this.state.isSettingVisible}
-            onSwipeStart={() => this.setState({ isSettingVisible: false })}
-            onBackdropPress={() => this.setState({ isSettingVisible: false })}
-            onPress={() => this.setState({ isSettingVisible: false })}
+            onSwipeStart={() => this.setState({isSettingVisible: false})}
+            onBackdropPress={() => this.setState({isSettingVisible: false})}
+            onPress={() => this.setState({isSettingVisible: false})}
             headerIcon={
               <Icon name={'settings'} size={width * 0.04} color="white" />
             }
             headerName={'Settings'}
             listItem={
               <FlatList
-                contentContainerStyle={{ justifyContent: 'center' }}
+                contentContainerStyle={{justifyContent: 'center'}}
                 data={this.state.settingData}
                 renderItem={this._renderSettingList}
               />
@@ -1402,7 +1523,7 @@ export default class App extends Component {
               />
             }
             note={
-              <Text style={{ color: 'white', fontSize: width * 0.015 }}>
+              <Text style={{color: 'white', fontSize: width * 0.015}}>
                 {this.state.settingsNote}
               </Text>
             }
@@ -1432,17 +1553,17 @@ export default class App extends Component {
                     Counts Inc.
                   </Text>
                 </View>
-                <Text style={{ color: 'white', fontSize: width * 0.015 }}>
+                <Text style={{color: 'white', fontSize: width * 0.015}}>
                   Address
                 </Text>
-                <Text style={{ color: 'white', fontSize: width * 0.015 }}>
+                <Text style={{color: 'white', fontSize: width * 0.015}}>
                   City
                 </Text>
-                <Text style={{ color: 'white', fontSize: width * 0.015 }}>
+                <Text style={{color: 'white', fontSize: width * 0.015}}>
                   State/Country
                 </Text>
-                <View style={{ marginVertical: height * 0.025 }}>
-                  <Text style={{ color: 'white', fontSize: width * 0.015 }}>
+                <View style={{marginVertical: height * 0.025}}>
+                  <Text style={{color: 'white', fontSize: width * 0.015}}>
                     Email:
                   </Text>
                 </View>
@@ -1451,8 +1572,8 @@ export default class App extends Component {
           />
           <Modal
             isVisible={this.state.BTAvailDevModal}
-            onBackdropPress={() => this.setState({ BTAvailDevModal: false })}
-            style={{ justifyContent: 'center', alignItems: 'center' }}>
+            onBackdropPress={() => this.setState({BTAvailDevModal: false})}
+            style={{justifyContent: 'center', alignItems: 'center'}}>
             <View
               style={{
                 width: width * 0.35,
@@ -1529,8 +1650,8 @@ export default class App extends Component {
           </Modal>
           <Modal
             isVisible={this.state.BTConnectDevModal}
-            onBackdropPress={() => this.setState({ BTConnectDevModal: false })}
-            style={{ justifyContent: 'center', alignItems: 'center' }}>
+            onBackdropPress={() => this.setState({BTConnectDevModal: false})}
+            style={{justifyContent: 'center', alignItems: 'center'}}>
             <View
               style={{
                 width: width * 0.35,
@@ -1661,7 +1782,7 @@ export default class App extends Component {
           <SetPinModal
             // isVisible={true}
             isVisible={this.state.setPin}
-            onBackPress={() => this.setState({ setPin: false })}
+            onBackPress={() => this.setState({setPin: false})}
             label={'Enter a PIN Code'}
             onFulfill={(code) => this.setNewPin(code)}
           />
@@ -1698,7 +1819,7 @@ export default class App extends Component {
               mode={'time'}
               is24Hour={true}
               display="spinner"
-              onChange={() => this.setState({ setTime: false })}
+              onChange={() => this.setState({setTime: false})}
               locale="es-ES"
             />
           )}
