@@ -934,7 +934,9 @@ export default class App extends Component {
           this.setState({index: this.state.index + 1});
           this.props.hardValueDone(true);
         }, 50);
-        RNSerialport.writeString('ACK');
+        if (this.props.serialConnected) {
+          RNSerialport.writeString('ACK');
+        }
       }
       setTimeout(() => {
         this.resetTheColor();

@@ -65,6 +65,7 @@ import {bytesToString} from 'convert-string';
 import {Calculator} from 'react-native-calculator';
 import Modal from 'react-native-modal';
 import {circIn} from 'eases';
+import clc from 'cli-color';
 
 let currentTime;
 const Sound = require('react-native-sound');
@@ -75,7 +76,6 @@ let song = new Sound('beep.mp3', Sound.MAIN_BUNDLE, (error) => {
 });
 
 const {height, width} = Dimensions.get('window');
-let yourReadSubscription;
 
 export default class App extends Component {
   constructor(props) {
@@ -141,6 +141,9 @@ export default class App extends Component {
       fullScreen: false,
       showFullScreen: false,
       bleMacId: '',
+      bleData: '',
+      bleConnected: false,
+      serialConnected: false,
       settingData: [
         {
           key: '1',
@@ -256,9 +259,7 @@ export default class App extends Component {
 
   componentWillUnmount() {
     this.disconnectBTDevice();
-    if (yourReadSubscription) {
-      BluetoothSerial.removeSubscription(yourReadSubscription);
-    }
+    clearInterval(this.readInterval);
   }
 
   //* Requesting Bluetooth permission from the user
@@ -385,8 +386,10 @@ export default class App extends Component {
 
   //handle new Activity send to Device
   handleSend = () => {
-    console.log('New Activity Started');
-    RNSerialport.writeString('N');
+    if (this.state.serialConnected) {
+      console.log('New Activity Started');
+      RNSerialport.writeString('N');
+    }
   };
 
   // PLay Timer
@@ -680,21 +683,7 @@ export default class App extends Component {
       //     this.setState({notconnected: true});
       //   }
       // }, 100);
-      try {
-        this.setState({notconnected: false});
-        let peripheralsArray = await RNBluetoothClassic.getConnectedDevices();
-        if (peripheralsArray.length == 0) {
-          this.setState({notconnected: true});
-          console.log('no connected devices found');
-        } else {
-          console.log('lolo', peripheralsArray);
-          this.setState({BTConnectedDev: peripheralsArray});
-          this.setState({notconnected: false});
-        }
-      } catch (e) {
-        console.log('Error while GetConnected', e);
-      }
-      this.setState({BTConnectDevModal: true});
+      this.getConnectedDevices();
     } else if (key.value == 'Setup Bootup Pin') {
       this.setState({
         setPin: true,
@@ -708,7 +697,33 @@ export default class App extends Component {
     }
   };
 
-  getConnectedDevices = async () => {};
+  getConnectedDevices = async () => {
+    try {
+      this.setState({notconnected: false});
+      let peripheralsArray = await BluetoothSerial.list();
+      if (peripheralsArray.length == 0) {
+        this.setState({notconnected: true});
+        console.log('no connected devices found');
+      } else {
+        console.log('lolo', peripheralsArray);
+        this.setState({BTConnectedDev: peripheralsArray});
+        this.setState({notconnected: false});
+      }
+    } catch (e) {
+      console.log('Error while GetConnected', e);
+    }
+    this.setState({BTConnectDevModal: true});
+  };
+
+  unPairDevice = async (item) => {
+    BluetoothSerial.unpairDevice(item.id)
+      .then((value) => {
+        console.log('unPaired Device', value);
+      })
+      .catch((e) => {
+        console.log('Error', e);
+      });
+  };
 
   scanBTAvailDev = async () => {
     this.setState({
@@ -729,47 +744,29 @@ export default class App extends Component {
     } catch (e) {
       console.log('Error aya at list', e);
     }
-    // try {
-    //   let unpaired = await RNBluetoothClassic.startDiscovery();
-    //   console.log('devices', unpaired);
-    //   this.setState({BTDev: unpaired});
-    //   this.setState({isloading: false});
-    //   if (this.state.BTDev[0] === undefined) {
-    //     this.setState({notfound: true});
-    //   }
-    // } catch (error) {
-    //   console.log('err', error);
-    // }
-    // BleManager.scan([], 10, true).then(() => {
-    //   // Success code
-    //   console.log('Scan started');
-    // });
-    // setTimeout(() => {
-    //   BleManager.getDiscoveredPeripherals([]).then((peripheralsArray) => {
-    //     // Success code
-    //     console.log('Discovered peripherals: ' + peripheralsArray.length);
-    //     this.setState({BTDev: peripheralsArray});
-    //     this.setState({isloading: false});
-    //     if (this.state.BTDev[0] === undefined) {
-    //       this.setState({notfound: true});
-    //     }
-    //   });
-    // }, 4000);
   };
 
   startRead = async (item) => {
-    const yourDevice = BluetoothSerial.device(item.id);
-    BluetoothSerial.read();
-    yourDevice.read((data, subscription) => {
-      yourReadSubscription = subscription;
-
-      console.log('Your data:', data);
-
-      if (this.state.notconnected) {
-        BluetoothSerial.removeSubscription(subscription);
-        yourReadSubscription = null;
-      }
-    });
+    // const yourDevice = BluetoothSerial.device(item.id);
+    console.log(clc.xterm(42)('Reading Started'));
+    this.readInterval = setInterval(() => {
+      BluetoothSerial.isConnected(item.id).then((state) => {
+        if (state) {
+          BluetoothSerial.readFromDevice(item.id).then((data) => {
+            if (data != '') {
+              console.log('Your Bluetooth data:', data);
+              this.setState({bleData: data});
+              setTimeout(() => {
+                this.setState({bleData: ''});
+              }, 10);
+            }
+          });
+        } else {
+          clearInterval(this.readInterval);
+          console.log('Reading Stopped Disconnected');
+        }
+      });
+    }, 1000);
   };
 
   writeToDevice = async () => {
@@ -790,7 +787,12 @@ export default class App extends Component {
     BluetoothSerial.connect(item.id)
       .then((state) => {
         console.log('Connected', state);
-        this.setState({bleMacId: item.id, isloading: false});
+        this.setState({
+          bleMacId: item.id,
+          isloading: false,
+          bleConnected: true,
+          BTAvailDevModal: false,
+        });
         ToastAndroid.show('Connected Successfully', ToastAndroid.SHORT);
         this.startRead(item);
         // setInterval(() => {
@@ -809,52 +811,27 @@ export default class App extends Component {
     this.setState({isloading: true});
 
     BluetoothSerial.disconnect(
-      typeof item.id == 'undefined' ? this.state.bleMacId : item.id,
+      typeof item == 'undefined' ? this.state.bleMacId : item.id,
     )
       .then((state) => {
         // Success code
+        clearInterval(this.readInterval);
         console.log('Disconnected', state);
+        this.unPairDevice(item);
         ToastAndroid.show('Disconnected', ToastAndroid.SHORT);
-        this.setState({notconnected: true, isloading: false, bleMacId: ''});
+        this.setState({
+          notconnected: true,
+          isloading: false,
+          bleMacId: '',
+          bleConnected: false,
+        });
+        this.getConnectedDevices();
       })
       .catch((e) => {
         // Failure code
         console.log(e);
       });
   };
-
-  // retrieveBleServices = (item) => {
-  //   BleManager.retrieveServices(item.id)
-  //     .then((itemInfo) => {
-  //       console.log('Peripheral info:', itemInfo);
-  //     })
-  //     .catch((e) => {
-  //       console.log('Error while retrieve', e);
-  //     });
-  // };
-
-  // onReadBlueTooth = (data) => {
-  //   console.log('REading...', data);
-  // };
-
-  // ReadBle = () => {
-  //   this.readSub = RNBluetoothClassic.onDeviceRead(
-  //     this.state.bleMacId,
-  //     (data) => onReadBlueTooth(data),
-  //   );
-
-  // };
-
-  // writeBle = (writeValue) => {
-  //   const stringData = writeValue;
-  //   RNBluetoothClassic.writeToDevice(this.state.bleMacId, stringData, 'utf-8')
-  //     .then((state) => {
-  //       console.log('Write Successfully', state);
-  //     })
-  //     .catch((e) => {
-  //       console.log('Error while write', e);
-  //     });
-  // };
 
   createFile = () => {
     console.log('chal rha hai', RNFS.ExternalStorageDirectoryPath);
@@ -878,6 +855,10 @@ export default class App extends Component {
       isInnerSettingVisible: false,
       contactVisible: false,
     });
+  };
+
+  handleSerialConnected = (child) => {
+    this.setState({serialConnected: child});
   };
 
   handleTheGirlsCriteria = (child) => {
@@ -1408,6 +1389,7 @@ export default class App extends Component {
             emomMinutesRange={this.handleEmomMinutesRange}
             tabataCon={this.state.tabataCon}
             fullScreen={this.state.fullScreen}
+            serialConnected={this.state.serialConnected}
           />
           <HardwereBotton
             hardValue={this.handleHardValue}
@@ -1422,7 +1404,10 @@ export default class App extends Component {
             activity={this.state.activity}
             tabataCon={this.state.tabataCon}
             fullScreen={this.state.fullScreen}
-            deviceMacId={this.state.bleMacId}
+            bleMacId={this.state.bleMacId}
+            bleData={this.state.bleData}
+            isConnected={this.state.bleConnected}
+            serialConnected={this.handleSerialConnected}
           />
           <Modal
             animationIn="slideInDown"

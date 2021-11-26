@@ -208,11 +208,15 @@ export default class App extends Component {
   }
   // ye function sirf state change kar rahe hain har usb action pr
   onConnected() {
-    this.setState({connected: true});
+    this.setState({connected: true}, () => {
+      this.props.serialConnected(true);
+    });
   }
   // ye function sirf state change kar rahe hain har usb action pr
   onDisconnected() {
-    this.setState({connected: false});
+    this.setState({connected: false}, () => {
+      this.props.serialConnected(false);
+    });
   }
   //* ye function data read karta hai usb se jo aarha hai aur output state pr save kar raha hai */
   onReadData(data) {
@@ -292,7 +296,18 @@ export default class App extends Component {
     this.setState({
       activity: nextProps.activity,
     });
+    if (this.props !== nextProps.bleData) {
+      if (this.props.bleData == 'D') {
+        console.log(clc.bgRed('ARAA hai VALUE KI', this.props.bleData));
+        this.bluetoothButtonWork(this.props.bleData);
+      }
+      if (this.props.bleData == 'R') {
+        console.log(clc.bgGreen('ARAA hai VALUE KI', this.props.bleData));
+        this.countRound();
+      }
+    }
   }
+
   checkActivity = () => {
     // console.log('activity VAlue ka bata', this.state.activiyValue)
     if (this.state.activiyValue == this.state.activity.length) {
@@ -300,12 +315,20 @@ export default class App extends Component {
       this.setState({bluetoothIndex: 1});
       this.setState({serialIndex: 1});
       this.setState({temp: 1});
-      RNSerialport.writeString('N');
+      if (this.state.connected) {
+        RNSerialport.writeString('N');
+      }
       console.log(clc.xterm(172)('Reset Temp'));
       setTimeout(() => {
         this.setState({actCondition: false});
       }, 100);
     } else {
+      console.log(
+        clc.yellowBright('++++XCCXC CHALA incr', this.state.activiyValue),
+      );
+      console.log(
+        clc.greenBright('++++XCCXC CHALA incr', this.state.activity.length),
+      );
       this.setState({activiyValue: this.state.activiyValue + 1});
       this.setState({bluetoothIndex: this.state.bluetoothIndex + 1});
       this.setState({serialIndex: this.state.serialIndex + 1});
@@ -314,23 +337,37 @@ export default class App extends Component {
       }, 100);
     }
   };
+
   bluetoothButtonWork = (value) => {
-    if (value === 'true') {
-      if (this.state.bluetoothIndex > 10) {
-        this.setState({bluetoothIndex: 1});
-        console.log('Bluetooth Index ka bata', this.state.bluetoothIndex);
-        setTimeout(() => {
-          this.hardwereBottonWork(this.state.bluetoothIndex);
-          console.log('Bluetooth Index ka bata', this.state.bluetoothIndex);
-        }, 200);
-      } else {
-        this.hardwereBottonWork(this.state.bluetoothIndex);
-      }
+    if (value === 'true' || value === 'D') {
+      // if (this.state.bluetoothIndex > 10) {
+      //   // this.setState({bluetoothIndex: 1});
+      //   console.log('Bluetooth Index ka bata', this.state.bluetoothIndex);
+      //   setTimeout(() => {
+      //     this.hardwereBottonWork(this.state.bluetoothIndex);
+      //     console.log('Bluetooth Index ka bata', this.state.bluetoothIndex);
+      //   }, 200);
+      // } else {
+      this.hardwereBottonWork(this.state.bluetoothIndex);
+      // }
       console.log('Bluetooth Mila', value);
     } else {
       console.log('Bluetooth Mila', value);
     }
   };
+
+  writeToDevice = async (value) => {
+    //TODO: Not currently in use
+    if (this.props.isConnected) {
+      try {
+        const res = await BluetoothSerial.write(value, this.props.bleMacId);
+        console.log('Res', res);
+      } catch (e) {
+        console.log('Error while writes', e);
+      }
+    }
+  };
+
   hardwereBottonWork = (value) => {
     // this.activiyValue = 21
     if (this.state.isShow == true && this.state.emomCondition == false) {
@@ -342,6 +379,7 @@ export default class App extends Component {
         setTimeout(() => {
           this.setState({runningCondtion: true});
         }, 1500);
+        console.log(clc.magentaBright('KIA MILA', value));
         // if (this.state.activiyValue > 10 && this.state.activiyValue < 21) {
         //   // console.log('10 wali')
         //   const total = (Number(value) + 10).toString();
@@ -393,9 +431,16 @@ export default class App extends Component {
   countRound = () => {
     if (this.state.isShow == true && this.state.emomCondition == false) {
       if (this.state.runningCondtion == true) {
-        console.log(clc.xterm(172)('Reset Temp'));
-        RNSerialport.writeString('N');
-        this.setState({runningCondtion: false, temp: 1});
+        if (this.state.connected) {
+          console.log(clc.xterm(172)('Reset Temp'));
+          RNSerialport.writeString('N');
+        }
+        this.setState({
+          runningCondtion: false,
+          temp: 1,
+          bluetoothIndex: 1,
+          activiyValue: 1,
+        });
         setTimeout(() => {
           this.setState({runningCondtion: true});
         }, 1500);
