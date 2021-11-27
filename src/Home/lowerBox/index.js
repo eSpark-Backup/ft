@@ -936,6 +936,7 @@ export default class App extends Component {
         }, 50);
         if (this.props.serialConnected) {
           RNSerialport.writeString('ACK');
+          console.log(clc.xterm(105)('XXXXX----SENT ACK----XXXXX'));
         }
       }
       setTimeout(() => {

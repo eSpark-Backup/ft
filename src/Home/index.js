@@ -699,14 +699,21 @@ export default class App extends Component {
 
   getConnectedDevices = async () => {
     try {
+      let countsArr = [];
       this.setState({notconnected: false});
       let peripheralsArray = await BluetoothSerial.list();
-      if (peripheralsArray.length == 0) {
+      countsArr = peripheralsArray.filter((item) => {
+        if (item.name !== null && item.name.toUpperCase().includes('COUNTS')) {
+          return item;
+        }
+      });
+      if (countsArr.length == 0) {
         this.setState({notconnected: true});
         console.log('no connected devices found');
+        console.log('0 length pr', peripheralsArray);
       } else {
-        console.log('lolo', peripheralsArray);
-        this.setState({BTConnectedDev: peripheralsArray});
+        console.log('> 0 length pr', peripheralsArray);
+        this.setState({BTConnectedDev: countsArr});
         this.setState({notconnected: false});
       }
     } catch (e) {
@@ -732,11 +739,16 @@ export default class App extends Component {
       BTAvailDevModal: true,
       BTDev: [],
     });
-
     try {
+      let countsArr = [];
       const unpaired = await BluetoothSerial.listUnpaired();
       console.log('Upaired list', unpaired);
-      this.setState({BTDev: unpaired});
+      countsArr = unpaired.filter((item) => {
+        if (item.name !== null && item.name.toUpperCase().includes('COUNTS')) {
+          return item;
+        }
+      });
+      this.setState({BTDev: countsArr});
       this.setState({isloading: false});
       if (this.state.BTDev[0] === undefined) {
         this.setState({notfound: true});
@@ -816,7 +828,7 @@ export default class App extends Component {
       .then((state) => {
         // Success code
         clearInterval(this.readInterval);
-        console.log('Disconnected', state);
+        console.log(clc.xterm(166)('Reading Stopped via Disconnected', state));
         this.unPairDevice(item);
         ToastAndroid.show('Disconnected', ToastAndroid.SHORT);
         this.setState({
