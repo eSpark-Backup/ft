@@ -235,7 +235,6 @@ export default class App extends Component {
     try {
       if (this.state.output === 'R') {
         this.countRound();
-        this.handleSend();
       } else if (Number.isInteger(numData)) {
         if (this.state.serialIndex > 0) {
           if (numData == this.state.temp) {
@@ -254,7 +253,7 @@ export default class App extends Component {
         }
       } else {
         RNSerialport.writeString('NACK');
-        console.log(clc.yellowBright('Ghalat Cheez'));
+        console.log(clc.yellowBright('Ghalat Cheez mili', this.state.output));
       }
     } catch (e) {
       console.log('Error', e);
@@ -262,7 +261,7 @@ export default class App extends Component {
   }
   // ye function error aane ki surat pr console kar raha hai
   onError(error) {
-    console.error(error);
+    console.error('Some Error Serial', error);
   }
   // ye data jo read ho raha hai agr hex ya int array me aa raha hai tou wo usko string me convert kare ga
   handleConvertButton() {
@@ -432,7 +431,7 @@ export default class App extends Component {
     if (this.state.isShow == true && this.state.emomCondition == false) {
       if (this.state.runningCondtion == true) {
         if (this.state.connected) {
-          console.log(clc.xterm(172)('Reset Temp'));
+          console.log(clc.xterm(172)('Reset Serial Comm'));
           RNSerialport.writeString('N');
         }
         this.setState({
@@ -440,6 +439,7 @@ export default class App extends Component {
           temp: 1,
           bluetoothIndex: 1,
           activiyValue: 1,
+          serialIndex: 1,
         });
         setTimeout(() => {
           this.setState({runningCondtion: true});
