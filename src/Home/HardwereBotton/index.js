@@ -116,6 +116,7 @@ export default class App extends Component {
       serialIndex: 1,
       temp: 1,
       serialModal: false,
+      serialRound: false,
     };
     //* ye hamare listener lage hain functions pr jo check karte rehte hai usb port pr
     this.startUsbListener = this.startUsbListener.bind(this);
@@ -234,7 +235,13 @@ export default class App extends Component {
     const numData = parseInt(this.state.output);
     try {
       if (this.state.output === 'R') {
-        this.countRound();
+        this.setState({serialRound: true}, () => {
+          this._handleSerialRound(this.state.serialRound);
+          setTimeout(() => {
+            this.setState({serialRound: false});
+          }, 1000);
+        });
+        console.log('>>><<<<<>>><<<<>>>>>>>', typeof this.state.output);
       } else if (Number.isInteger(numData)) {
         if (this.state.serialIndex > 0) {
           if (numData == this.state.temp) {
@@ -259,6 +266,15 @@ export default class App extends Component {
       console.log('Error', e);
     }
   }
+
+  _handleSerialRound = (val) => {
+    if (val) {
+      this.countRound();
+      console.log('Not Recieved R');
+    }
+    console.log('Not Recieved R');
+  };
+
   // ye function error aane ki surat pr console kar raha hai
   onError(error) {
     console.error('Some Error Serial', error);
