@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 import style from './style';
-import { Icon } from 'react-native-material-ui';
+import {Icon} from 'react-native-material-ui';
 import Modal from 'react-native-modal';
 import {
   Badger,
@@ -227,23 +227,27 @@ import {
   open204,
   open205,
 } from '../../../service/TheGirls/Open/index';
-import { manageAllTheData, validateGirlsAndHeroes } from '../../../service/TheGirls/manageDataFn';
+import {
+  manageAllTheData,
+  validateGirlsAndHeroes,
+} from '../../../service/TheGirls/manageDataFn';
 
 import Criteria1 from '../criteria1';
 import Criteria2 from '../criteria2';
 
-import { Fonts } from '../../../utils/fonts';
-import { selectProgram } from '../../../Store/actions/program';
-import { selectTheGirls } from '../../../Store/actions/theGirls';
-import { store } from '../../../Store';
-import { program } from '../../../config/program';
+import {RNSerialport} from 'react-native-serialport';
+import {Fonts} from '../../../utils/fonts';
+import {selectProgram} from '../../../Store/actions/program';
+import {selectTheGirls} from '../../../Store/actions/theGirls';
+import {store} from '../../../Store';
+import {program} from '../../../config/program';
 import CountUp from './../../Timer/timer1Modal/countUp';
 import CountDown from './../../Timer/timer1Modal/countDown';
 import EMOM from './../../Timer/timer1Modal/emom';
 import Tabata from './../../Timer/timer1Modal/tabata';
 import Clock from './../../Timer/timer1Modal/clock';
 
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 
 export default class Programs extends Component {
   constructor(props) {
@@ -284,12 +288,16 @@ export default class Programs extends Component {
   }
   handleDisableActivity = (child) => {
     // console.log(child, 'disable activity ka child')
-    this.setState({ disableActivity: child }, () => this.props.disableActivity(this.state.disableActivity))
-  }
+    this.setState({disableActivity: child}, () =>
+      this.props.disableActivity(this.state.disableActivity),
+    );
+  };
   handleCriteriaName = (child) => {
     // console.log(child, 'Criteria name is child')
-    this.setState({ criteriaName: child }, () => this.props.criteriaName(this.state.criteriaName))
-  }
+    this.setState({criteriaName: child}, () =>
+      this.props.criteriaName(this.state.criteriaName),
+    );
+  };
 
   toggleModal = () => {
     this.setState({
@@ -311,12 +319,14 @@ export default class Programs extends Component {
       tabataRest: 0,
       tabataRounds: 0,
     });
+    RNSerialport.writeString('M');
+    console.log('Send M to Device');
     setTimeout(() => {
       this.props.clearAll(!this.state.clearData),
         this.props.minutes(0),
         this.props.forTime(0),
         this.props.emomMinutes(0);
-      this.props.disableActivity(false)
+      this.props.disableActivity(false);
     }, 50);
     setTimeout(() => {
       this.props.clearAll(this.state.clearData);
@@ -398,34 +408,38 @@ export default class Programs extends Component {
   };
 
   handlePassingMinutes = (child) => {
-    this.setState({ tabataMinutes: child }, () => this.props.tabataMinutes(this.state.tabataMinutes));
+    this.setState({tabataMinutes: child}, () =>
+      this.props.tabataMinutes(this.state.tabataMinutes),
+    );
     // console.log(child, 'child minutes')
   };
   handlePassingRest = (child) => {
-    this.setState({ tabataRest: child }, () => this.props.tabataRest(this.state.tabataRest));
+    this.setState({tabataRest: child}, () =>
+      this.props.tabataRest(this.state.tabataRest),
+    );
     // console.log(child, 'child rest')
-
   };
   handlePassingRound = (child) => {
-    this.setState({ tabataRounds: child }, () => this.props.tabataRounds(this.state.tabataRounds));
+    this.setState({tabataRounds: child}, () =>
+      this.props.tabataRounds(this.state.tabataRounds),
+    );
     // console.log(child, 'child round ')
-
   };
 
   handleTime = (child) => {
-    this.setState({ time: child }, () => this.props.minutes(this.state.time));
+    this.setState({time: child}, () => this.props.minutes(this.state.time));
   };
 
   handleForTime = (child) => {
-    this.setState({ round: child }, () => this.props.forTime(this.state.round));
+    this.setState({round: child}, () => this.props.forTime(this.state.round));
   };
   handleEmom = (child) => {
-    this.setState({ emomMinutes: child }, () =>
+    this.setState({emomMinutes: child}, () =>
       this.props.emomMinutes(this.state.emomMinutes),
     );
   };
   handleTimeUp = (child) => {
-    this.setState({ selectTime: child });
+    this.setState({selectTime: child});
     if (child == false) {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
       this.setState({
@@ -435,10 +449,10 @@ export default class Programs extends Component {
     }
   };
   handleModal = (child) => {
-    this.setState({ isModalVisible: child });
+    this.setState({isModalVisible: child});
   };
   handleClock = (child) => {
-    this.setState({ selectTime: child });
+    this.setState({selectTime: child});
     if (child == true) {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
       this.setState({
@@ -448,44 +462,51 @@ export default class Programs extends Component {
     }
   };
   handleSelectProgram = (item) => {
-
     store.dispatch(selectProgram(item));
     !item.key == 'The Girls' ||
       ('The Heroes' && store.dispatch(selectTheGirls([])));
     if (item.key == 'AMRAP') {
-      this.setState({ itemName: item.value });
+      this.setState({itemName: item.value});
       this.changeLayoutMeterDown();
     } else if (item.key == 'The Heroes') {
-      this.setState({ selectedProgram: 'Heroes' })
-      this.setState({ disableActivity: true }, () => this.props.disableActivity(this.state.disableActivity));
-      this.setState({ criteria: !this.state.criteria });
-      // this.changeLayoutMeterDown() 
+      this.setState({selectedProgram: 'Heroes'});
+      this.setState({disableActivity: true}, () =>
+        this.props.disableActivity(this.state.disableActivity),
+      );
+      this.setState({criteria: !this.state.criteria});
+      // this.changeLayoutMeterDown()
     } else if (item.key == 'The Girls') {
-      this.setState({ selectedProgram: 'Girls' })
-      this.setState({ disableActivity: true }, () => this.props.disableActivity(this.state.disableActivity));
-      this.setState({ criteria: !this.state.criteria });
+      this.setState({selectedProgram: 'Girls'});
+      this.setState({disableActivity: true}, () =>
+        this.props.disableActivity(this.state.disableActivity),
+      );
+      this.setState({criteria: !this.state.criteria});
       // this.changeLayoutMeterDown()
     } else if (item.key == 'The Open') {
-      this.setState({ selectedProgram: 'Open' })
-      this.setState({ disableActivity: true }, () => this.props.disableActivity(this.state.disableActivity));
-      this.setState({ criteria: !this.state.criteria });
+      this.setState({selectedProgram: 'Open'});
+      this.setState({disableActivity: true}, () =>
+        this.props.disableActivity(this.state.disableActivity),
+      );
+      this.setState({criteria: !this.state.criteria});
       // this.changeLayoutMeterDown()
     } else if (item.key == 'For Time') {
       this.changeLayoutMeter();
     } else if (item.key == 'EMOM') {
       this.changeLayoutEmom();
     } else if (item.key == 'Tabata') {
-      this.setState({ disableActivity: true }, () => this.props.disableActivity(this.state.disableActivity));
+      this.setState({disableActivity: true}, () =>
+        this.props.disableActivity(this.state.disableActivity),
+      );
       this.changeLayoutTabata();
     } else if (item.key == 'Clock') {
       this.changeLayoutClock();
     } else {
-      this.setState({ criteria: false });
+      this.setState({criteria: false});
     }
   };
 
-  _renderMyList = ({ item }) => (
-    <View style={{ flex: 1 }}>
+  _renderMyList = ({item}) => (
+    <View style={{flex: 1}}>
       <TouchableOpacity
         style={{
           width: width * 0.7,
@@ -511,2452 +532,2466 @@ export default class Programs extends Component {
   );
 
   receiveDataFromChild = (val, item) => {
-
-
     if (item.value == 'Angie') {
-      this.setState({ data: angie });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: angie});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(angie);
-    } if (item.value == 'Annie') {
-      this.setState({ data: annie });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Annie') {
+      this.setState({data: annie});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(annie);
-    } if (item.value == 'Barbara') {
-      this.setState({ data: barbara });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Barbara') {
+      this.setState({data: barbara});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(barbara);
-    } if (item.value == 'Chelsea') {
-      this.setState({ data: chelsea });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Chelsea') {
+      this.setState({data: chelsea});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(chelsea);
-    } if (item.value == 'Cindy') {
-      this.setState({ data: cindy });
-      this.setState({ forTimeOrMinutes: 1 })
+    }
+    if (item.value == 'Cindy') {
+      this.setState({data: cindy});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type * 60 });
+        this.setState({round: this.state.data.type * 60});
         setTimeout(() => {
-          this.props.minutes(this.state.round)
+          this.props.minutes(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(cindy);
-    } if (item.value == 'Diane') {
-      this.setState({ data: diane });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Diane') {
+      this.setState({data: diane});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(diane);
-    } if (item.value == 'Elizabeth') {
-      this.setState({ data: elizabeth });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Elizabeth') {
+      this.setState({data: elizabeth});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(elizabeth);
-    } if (item.value == 'Eva') {
-      this.setState({ data: eva });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Eva') {
+      this.setState({data: eva});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(eva);
-    } if (item.value == 'Fran') {
-      this.setState({ data: fran });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Fran') {
+      this.setState({data: fran});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(fran);
-    } if (item.value == 'Grace') {
-      this.setState({ data: grace });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Grace') {
+      this.setState({data: grace});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(grace);
-    } if (item.value == 'Helen') {
-      this.setState({ data: helen });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Helen') {
+      this.setState({data: helen});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(helen);
-    } if (item.value == 'Isabel') {
-      this.setState({ data: isabel });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Isabel') {
+      this.setState({data: isabel});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(isabel);
-    } if (item.value == 'Jackie') {
-      this.setState({ data: jackie });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Jackie') {
+      this.setState({data: jackie});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(jackie);
-    } if (item.value == 'Karen') {
-      this.setState({ data: karen });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Karen') {
+      this.setState({data: karen});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(karen);
-    } if (item.value == 'Kelly') {
-      this.setState({ data: kelly });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Kelly') {
+      this.setState({data: kelly});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(kelly);
-    } if (item.value == 'Linda') {
-      this.setState({ data: linda });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Linda') {
+      this.setState({data: linda});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(linda);
-    } if (item.value == 'Lynne') {
-      this.setState({ data: lynne });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Lynne') {
+      this.setState({data: lynne});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(lynne);
-    } if (item.value == 'Mary') {
-      this.setState({ data: mary });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Mary') {
+      this.setState({data: mary});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(mary);
-    } if (item.value == 'Nancy') {
-      this.setState({ data: nancy });
-      this.setState({ forTimeOrMinutes: 0 })
+    }
+    if (item.value == 'Nancy') {
+      this.setState({data: nancy});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(nancy);
-    } if (item.value == 'Nicole') {
-      this.setState({ data: nicole });
-      this.setState({ forTimeOrMinutes: 1 })
+    }
+    if (item.value == 'Nicole') {
+      this.setState({data: nicole});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type * 60 });
+        this.setState({round: this.state.data.type * 60});
         setTimeout(() => {
-          this.props.minutes(this.state.round)
+          this.props.minutes(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(nicole);
     }
     if (item.value == 'Badger') {
-      this.setState({ data: Badger });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Badger});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Badger);
     }
     if (item.value == 'Daniel') {
-      this.setState({ data: Daniel });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Daniel});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Daniel);
     }
     if (item.value == 'Jason') {
-      this.setState({ data: Jason });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Jason});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Jason);
     }
     if (item.value == 'Josh') {
-      this.setState({ data: Josh });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Josh});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Josh);
     }
     if (item.value == 'Joshie') {
-      this.setState({ data: Joshie });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Joshie});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Joshie);
     }
     if (item.value == 'JT') {
-      this.setState({ data: JT });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: JT});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(JT);
     }
     if (item.value == 'Michael') {
-      this.setState({ data: Michael });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Michael});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Michael);
     }
     if (item.value == 'Murph') {
-      this.setState({ data: Murph });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Murph});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Murph);
     }
     if (item.value == 'Nate') {
-      this.setState({ data: Nate });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Nate});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Nate);
     }
     if (item.value == 'Randy') {
-      this.setState({ data: Randy });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Randy});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Randy);
     }
     if (item.value == 'Tommy V') {
-      this.setState({ data: TommyV });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: TommyV});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(TommyV);
     }
     if (item.value == 'Griff') {
-      this.setState({ data: Griff });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Griff});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Griff);
     }
     if (item.value == 'Ryan') {
-      this.setState({ data: Ryan });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Ryan});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Ryan);
     }
     if (item.value == 'Erin') {
-      this.setState({ data: Erin });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Erin});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Erin);
     }
     if (item.value == 'Mr.Joshua') {
-      this.setState({ data: MrJoshua });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: MrJoshua});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(MrJoshua);
     }
     if (item.value == 'DT') {
-      this.setState({ data: DT });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: DT});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(DT);
     }
     if (item.value == 'Danny') {
-      this.setState({ data: Danny });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Danny});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Danny);
     }
     if (item.value == 'Hansen') {
-      this.setState({ data: Hansen });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Hansen});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Hansen);
     }
     if (item.value == 'Tyler') {
-      this.setState({ data: Tyler });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Tyler});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Tyler);
     }
     if (item.value == 'Lumberjack 20') {
-      this.setState({ data: Lumberjack20 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Lumberjack20});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Lumberjack20);
     }
     if (item.value == 'Stephen') {
-      this.setState({ data: Stephen });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Stephen});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Stephen);
     }
     if (item.value == 'Garret') {
-      this.setState({ data: Garrett });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Garrett});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Garrett);
     }
     if (item.value == 'War Frank') {
-      this.setState({ data: WarFrank });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: WarFrank});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(WarFrank);
     }
     if (item.value == 'McGhee') {
-      this.setState({ data: McGhee });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: McGhee});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(McGhee);
     }
     if (item.value == 'Paul') {
-      this.setState({ data: Paul });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Paul});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Paul);
     }
     if (item.value == 'Jerry') {
-      this.setState({ data: Jerry });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Jerry});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Jerry);
     }
     if (item.value == 'Nutts') {
-      this.setState({ data: Nutts });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Nutts});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Nutts);
     }
     if (item.value == 'Arnie') {
-      this.setState({ data: Arnie });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Arnie});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Arnie);
     }
     if (item.value == 'The Seven') {
-      this.setState({ data: TheSeven });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: TheSeven});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(TheSeven);
     }
     if (item.value == 'RJ') {
-      this.setState({ data: RJ });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: RJ});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(RJ);
     }
     if (item.value == 'Luce') {
-      this.setState({ data: Luce });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Luce});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Luce);
     }
     if (item.value == 'Johnson') {
-      this.setState({ data: Johnson });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Johnson});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Johnson);
     }
     if (item.value == 'Roy') {
-      this.setState({ data: Roy });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Roy});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Roy);
     }
     if (item.value == 'AdamBrown') {
-      this.setState({ data: AdamBrown });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: AdamBrown});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(AdamBrown);
     }
     if (item.value == 'Coe') {
-      this.setState({ data: Coe });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Coe});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Coe);
     }
     if (item.value == 'Severin') {
-      this.setState({ data: Severin });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Severin});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Severin);
     }
     if (item.value == 'Helton') {
-      this.setState({ data: Helton });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Helton});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Helton);
     }
     if (item.value == 'Jack') {
-      this.setState({ data: Jack });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Jack});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Jack);
     }
     if (item.value == 'Forrest') {
-      this.setState({ data: Forrest });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Forrest});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Forrest);
     }
     if (item.value == 'Bulger') {
-      this.setState({ data: Bulger });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Bulger});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Bulger);
     }
     if (item.value == 'Brenton') {
-      this.setState({ data: Brenton });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Brenton});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Brenton);
     }
     if (item.value == 'Blake') {
-      this.setState({ data: Blake });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Blake});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Blake);
     }
     if (item.value == 'Collin') {
-      this.setState({ data: Collin });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Collin});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Collin);
     }
     if (item.value == 'Thomson') {
-      this.setState({ data: Thompson });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Thompson});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Thompson);
     }
     if (item.value == 'Whitten') {
-      this.setState({ data: Whitten });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Whitten});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Whitten);
     }
     if (item.value == 'Bull') {
-      this.setState({ data: Bull });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Bull});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Bull);
     }
     if (item.value == 'Rankel') {
-      this.setState({ data: Rankel });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Rankel});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Rankel);
     }
     if (item.value == 'Holbrook') {
-      this.setState({ data: Holbrook });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Holbrook});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Holbrook);
     }
     if (item.value == 'Ledesma') {
-      this.setState({ data: Ledesma });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Ledesma});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Ledesma);
     }
     if (item.value == 'Wittman') {
-      this.setState({ data: Wittman });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Wittman});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Wittman);
     }
     if (item.value == 'McCluskey') {
-      this.setState({ data: McCluskey });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: McCluskey});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(McCluskey);
     }
     if (item.value == 'Weaver') {
-      this.setState({ data: Weaver });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Weaver});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Weaver);
     }
     if (item.value == 'Abbate') {
-      this.setState({ data: Abbate });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Abbate});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Abbate);
     }
     if (item.value == 'Hammer') {
-      this.setState({ data: Hammer });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Hammer});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Hammer);
     }
     if (item.value == 'Moore') {
-      this.setState({ data: Moore });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Moore});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Moore);
     }
     if (item.value == 'Wilmot') {
-      this.setState({ data: Wilmot });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Wilmot});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Wilmot);
     }
     if (item.value == 'Moon') {
-      this.setState({ data: Moon });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Moon});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Moon);
     }
     if (item.value == 'Small') {
-      this.setState({ data: Small });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Small});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Small);
     }
     if (item.value == 'Morrison') {
-      this.setState({ data: Morrison });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Morrison});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Morrison);
     }
     if (item.value == 'Manion') {
-      this.setState({ data: Manion });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Manion});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Manion);
     }
     if (item.value == 'Gator') {
-      this.setState({ data: Gator });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Gator});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Gator);
     }
     if (item.value == 'Bradley') {
-      this.setState({ data: Bradley });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Bradley});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Bradley);
     }
     if (item.value == 'Meadows') {
-      this.setState({ data: Meadows });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Meadows});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Meadows);
     }
     if (item.value == 'Santiago') {
-      this.setState({ data: Santiago });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Santiago});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Santiago);
     }
     if (item.value == 'Carse') {
-      this.setState({ data: Carse });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Carse});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Carse);
     }
     if (item.value == 'Bradshaw') {
-      this.setState({ data: Bradshaw });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Bradshaw});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Bradshaw);
     }
     if (item.value == 'White') {
-      this.setState({ data: White });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: White});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(White);
     }
     if (item.value == 'Santora') {
-      this.setState({ data: Santora });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Santora});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Santora);
     }
     if (item.value == 'Wood') {
-      this.setState({ data: Wood });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Wood});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Wood);
     }
     if (item.value == 'Hidalgo') {
-      this.setState({ data: Hidalgo });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Hidalgo});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Hidalgo);
     }
     if (item.value == 'Ricky') {
-      this.setState({ data: Ricky });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Ricky});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Ricky);
     }
     if (item.value == 'Dae Han') {
-      this.setState({ data: DaeHan });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: DaeHan});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(DaeHan);
     }
     if (item.value == 'Desforge') {
-      this.setState({ data: Desforge });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Desforge});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Desforge);
     }
     if (item.value == 'Rahoi') {
-      this.setState({ data: Rahoi });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Rahoi});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Rahoi);
     }
     if (item.value == 'Zimmerman') {
-      this.setState({ data: Zimmerman });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Zimmerman});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Zimmerman);
     }
     if (item.value == 'Klepto') {
-      this.setState({ data: Klepto });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Klepto});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Klepto);
     }
     if (item.value == 'Del') {
-      this.setState({ data: Del });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Del});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Del);
     }
     if (item.value == 'Pheezy') {
-      this.setState({ data: Pheezy });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Pheezy});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Pheezy);
     }
     if (item.value == 'J.J.') {
-      this.setState({ data: JJ });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: JJ});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(JJ);
     }
     if (item.value == 'Jag 28') {
-      this.setState({ data: Jag28 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Jag28});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Jag28);
     }
     if (item.value == 'Brian') {
-      this.setState({ data: Brian });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Brian});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Brian);
     }
     if (item.value == 'Nick') {
-      this.setState({ data: Nick });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Nick});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Nick);
     }
     if (item.value == 'Strange') {
-      this.setState({ data: Strange });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Strange});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Strange);
     }
     if (item.value == 'Tumilson') {
-      this.setState({ data: Tumilson });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Tumilson});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Tumilson);
     }
     if (item.value == 'Ship') {
-      this.setState({ data: Ship });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Ship});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Ship);
     }
     if (item.value == 'Jared') {
-      this.setState({ data: Jared });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Jared});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Jared);
     }
     if (item.value == 'Tully') {
-      this.setState({ data: Tully });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Tully});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Tully);
     }
     if (item.value == 'Holleyman') {
-      this.setState({ data: Holleyman });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Holleyman});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Holleyman);
     }
     if (item.value == 'Adrian') {
-      this.setState({ data: Adrian });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Adrian});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Adrian);
     }
     if (item.value == 'Glen') {
-      this.setState({ data: Glen });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Glen});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Glen);
     }
     if (item.value == 'Tom') {
-      this.setState({ data: Tom });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Tom});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Tom);
     }
     if (item.value == 'Ralph') {
-      this.setState({ data: Ralph });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Ralph});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Ralph);
     }
     if (item.value == 'Clovis') {
-      this.setState({ data: Clovis });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Clovis});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Clovis);
     }
     if (item.value == 'Weston') {
-      this.setState({ data: Weston });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Weston});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Weston);
     }
     if (item.value == 'Loredo') {
-      this.setState({ data: Loredo });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Loredo});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Loredo);
     }
     if (item.value == 'Sean') {
-      this.setState({ data: Sean });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Sean});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Sean);
     }
     if (item.value == 'Hortman') {
-      this.setState({ data: Hortman });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Hortman});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Hortman);
     }
     if (item.value == 'Hamilton') {
-      this.setState({ data: Hamilton });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Hamilton});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Hamilton);
     }
     if (item.value == 'Zeus') {
-      this.setState({ data: Zeus });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Zeus});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Zeus);
     }
     if (item.value == 'Barraza') {
-      this.setState({ data: Barraza });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Barraza});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Barraza);
     }
     if (item.value == 'Cameron') {
-      this.setState({ data: Cameron });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Cameron});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Cameron);
     }
     if (item.value == 'Jorge') {
-      this.setState({ data: Jorge });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Jorge});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Jorge);
     }
     if (item.value == 'Schmalls') {
-      this.setState({ data: Schmalls });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Schmalls});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Schmalls);
     }
     if (item.value == 'Brehm') {
-      this.setState({ data: Brehm });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Brehm});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Brehm);
     }
     if (item.value == 'Omar') {
-      this.setState({ data: Omar });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Omar});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Omar);
     }
     if (item.value == 'Gallant') {
-      this.setState({ data: Gallant });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Gallant});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Gallant);
     }
     if (item.value == 'Bruck') {
-      this.setState({ data: Bruck });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Bruck});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Bruck);
     }
     if (item.value == 'Falkel') {
-      this.setState({ data: Falkel });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Falkel});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Falkel);
     }
     if (item.value == 'Donny') {
-      this.setState({ data: Donny });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Donny});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Donny);
     }
     if (item.value == 'Dobogai') {
-      this.setState({ data: Dobogai });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Dobogai});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Dobogai);
     }
     if (item.value == 'Hotshots 19') {
-      this.setState({ data: Hotshots19 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Hotshots19});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Hotshots19);
     }
     if (item.value == 'Roney') {
-      this.setState({ data: Roney });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Roney});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Roney);
     }
     if (item.value == 'The Don') {
-      this.setState({ data: TheDon });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: TheDon});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(TheDon);
     }
     if (item.value == 'Dragon') {
-      this.setState({ data: Dragon });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Dragon});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Dragon);
     }
     if (item.value == 'Walsh') {
-      this.setState({ data: Walsh });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Walsh});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Walsh);
     }
     if (item.value == 'Lee') {
-      this.setState({ data: Lee });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Lee});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Lee);
     }
     if (item.value == 'Willy') {
-      this.setState({ data: Willy });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Willy});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Willy);
     }
     if (item.value == 'Coffey') {
-      this.setState({ data: Coffey });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Coffey});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Coffey);
     }
     if (item.value == 'DG') {
-      this.setState({ data: DG });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: DG});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(DG);
     }
     if (item.value == 'TK') {
-      this.setState({ data: TK });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: TK});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(TK);
     }
     if (item.value == 'Taylor') {
-      this.setState({ data: Taylor });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Taylor});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Taylor);
     }
     if (item.value == 'Justin') {
-      this.setState({ data: Justin });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Justin});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Justin);
     }
     if (item.value == 'Zembiec') {
-      this.setState({ data: Zembiec });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Zembiec});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Zembiec);
     }
     if (item.value == 'Alexander') {
-      this.setState({ data: Alexander });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Alexander});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Alexander);
     }
     if (item.value == 'Wyk') {
-      this.setState({ data: Wyk });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Wyk});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Wyk);
     }
     if (item.value == 'Bell') {
-      this.setState({ data: Bell });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Bell});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Bell);
     }
     if (item.value == 'Jbo') {
-      this.setState({ data: Jbo });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Jbo});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Jbo);
     }
     if (item.value == 'Kevin') {
-      this.setState({ data: Kevin });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Kevin});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Kevin);
     }
     if (item.value == 'Rocket') {
-      this.setState({ data: Rocket });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: Rocket});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Rocket);
     }
     if (item.value == 'Riley') {
-      this.setState({ data: Riley });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Riley});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Riley);
     }
     if (item.value == 'Feeks') {
-      this.setState({ data: Feeks });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Feeks});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Feeks);
     }
     if (item.value == 'Ned') {
-      this.setState({ data: Ned });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Ned});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Ned);
     }
     if (item.value == 'Sham') {
-      this.setState({ data: Sham });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Sham});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Sham);
     }
     if (item.value == 'Ozzy') {
-      this.setState({ data: Ozzy });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: Ozzy});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(Ozzy);
     }
     if (item.value == '11.1') {
-      this.setState({ data: open111 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open111});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open111);
     }
     if (item.value == '11.2') {
-      this.setState({ data: open112 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open112});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open112);
     }
     if (item.value == '11.3') {
-      this.setState({ data: open113 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open113});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open113);
     }
     if (item.value == '11.4') {
-      this.setState({ data: open114 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open114});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open114);
     }
     if (item.value == '11.5') {
-      this.setState({ data: open115 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open115});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open115);
     }
     if (item.value == '12.1') {
-      this.setState({ data: open121 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open121});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open121);
     }
     if (item.value == '12.2') {
-      this.setState({ data: open122 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open122});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open122);
     }
     if (item.value == '12.3') {
-      this.setState({ data: open123 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open123});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open123);
     }
     if (item.value == '12.4') {
-      this.setState({ data: open124 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open124});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open124);
     }
     if (item.value == '12.5') {
-      this.setState({ data: open125 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open125});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open125);
     }
     if (item.value == '13.1') {
-      this.setState({ data: open131 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open131});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open131);
     }
     if (item.value == '13.2') {
-      this.setState({ data: open132 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open132});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open132);
     }
     if (item.value == '13.3') {
-      this.setState({ data: open133 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open133});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open133);
     }
     if (item.value == '13.4') {
-      this.setState({ data: open134 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open134});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open134);
     }
     if (item.value == '13.5') {
-      this.setState({ data: open135 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open135});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open135);
     }
     if (item.value == '14.1') {
-      this.setState({ data: open141 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open141});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open141);
     }
     if (item.value == '14.2') {
-      this.setState({ data: open142 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open142});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open142);
     }
     if (item.value == '14.3') {
-      this.setState({ data: open143 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open143});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open143);
     }
     if (item.value == '14.4') {
-      this.setState({ data: open144 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open144});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open144);
     }
     if (item.value == '14.5') {
-      this.setState({ data: open145 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open145});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open145);
     }
     if (item.value == '15.1') {
-      this.setState({ data: open151 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open151});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open151);
     }
     if (item.value == '15.2') {
-      this.setState({ data: open152 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open152});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open152);
     }
     if (item.value == '15.3') {
-      this.setState({ data: open153 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open153});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open153);
     }
     if (item.value == '15.4') {
-      this.setState({ data: open154 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open154});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open154);
     }
     if (item.value == '15.5') {
-      this.setState({ data: open155 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open155});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open155);
     }
     if (item.value == '16.1') {
-      this.setState({ data: open161 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open161});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open161);
     }
     if (item.value == '16.2') {
-      this.setState({ data: open162 });
-      this.setState({ forTimeOrMinutes: 2 })
+      this.setState({data: open162});
+      this.setState({forTimeOrMinutes: 2});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.emomMinutes(this.state.round * 60)
+          this.props.emomMinutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open162);
     }
     if (item.value == '16.3') {
-      this.setState({ data: open163 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open163});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open163);
     }
     if (item.value == '16.4') {
-      this.setState({ data: open164 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open164});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open164);
     }
     if (item.value == '16.5') {
-      this.setState({ data: open165 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open165});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open165);
     }
     if (item.value == '17.1') {
-      this.setState({ data: open171 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open171});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open171);
     }
     if (item.value == '17.2') {
-      this.setState({ data: open172 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open172});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open172);
     }
     if (item.value == '17.3') {
-      this.setState({ data: open173 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open173});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open173);
     }
     if (item.value == '17.4') {
-      this.setState({ data: open174 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open174});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open174);
     }
     if (item.value == '17.5') {
-      this.setState({ data: open175 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open175});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open175);
     }
     if (item.value == '18.1') {
-      this.setState({ data: open181 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open181});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open181);
     }
     if (item.value == '18.2') {
-      this.setState({ data: open182 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open182});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open182);
     }
     if (item.value == '18.3') {
-      this.setState({ data: open183 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open183});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open183);
     }
     if (item.value == '18.4') {
-      this.setState({ data: open184 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open184});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open184);
     }
     if (item.value == '18.5') {
-      this.setState({ data: open185 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open185});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open185);
     }
     if (item.value == '19.1') {
-      this.setState({ data: open191 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open191});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open191);
     }
     if (item.value == '19.2') {
-      this.setState({ data: open192 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open192});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open192);
     }
     if (item.value == '19.3') {
-      this.setState({ data: open193 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open193});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open193);
     }
     if (item.value == '19.4') {
-      this.setState({ data: open194 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open194});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open194);
     }
     if (item.value == '19.5') {
-      this.setState({ data: open195 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open195});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open195);
     }
     if (item.value == '20.1') {
-      this.setState({ data: open201 });
-      this.setState({ forTimeOrMinutes: 0 })
+      this.setState({data: open201});
+      this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.forTime(this.state.round)
+          this.props.forTime(this.state.round);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open201);
     }
     if (item.value == '20.2') {
-      this.setState({ data: open202 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open202});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open202);
     }
     if (item.value == '20.3') {
-      this.setState({ data: open203 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open203});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open203);
     }
     if (item.value == '20.4') {
-      this.setState({ data: open204 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open204});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open204);
     }
     if (item.value == '20.5') {
-      this.setState({ data: open205 });
-      this.setState({ forTimeOrMinutes: 1 })
+      this.setState({data: open205});
+      this.setState({forTimeOrMinutes: 1});
       setTimeout(() => {
-        this.setState({ round: this.state.data.type });
+        this.setState({round: this.state.data.type});
         setTimeout(() => {
-          this.props.minutes(this.state.round * 60)
+          this.props.minutes(this.state.round * 60);
         }, 50);
       }, 50);
-      store.dispatch(selectTheGirls([]))
+      store.dispatch(selectTheGirls([]));
       return manageAllTheData(open205);
     }
 
     // validateGirlsAndHeroes({ item })
 
-
-
     // let crit = angie;
-    this.setState({ itemName: item?.target });
+    this.setState({itemName: item?.target});
     // console.log(crit,'critiiiiiii')
     // manageAllTheData({ crit });
     // this.changeLayoutMeterDown();
   };
   handleModalFalse = (child) => {
-    this.setState({ isModalVisible: child, criteria: child });
+    this.setState({isModalVisible: child, criteria: child});
   };
-
 
   renderClockModal = () => {
     return (
@@ -2983,7 +3018,9 @@ export default class Programs extends Component {
                         isModalVisible: !this.state.isModalVisible,
                         time: 0,
                       });
-                      this.setState({ disableActivity: true }, () => this.props.disableActivity(this.state.disableActivity));
+                      this.setState({disableActivity: true}, () =>
+                        this.props.disableActivity(this.state.disableActivity),
+                      );
                     }}>
                     <Icon name={'cancel'} size={width * 0.04} color="#FF6100" />
                   </TouchableOpacity>
@@ -3054,8 +3091,6 @@ export default class Programs extends Component {
               passingRest={this.handlePassingRest}
               tabataRounds={this.handlePassingRound}
               modalOff={this.handleModal}
-
-
             />
           </View>
           <View
@@ -3071,34 +3106,34 @@ export default class Programs extends Component {
     );
   };
   stopTimer = () => {
-    this.setState({ stop: true }, () => this.props.stopTimer(this.state.stop));
+    this.setState({stop: true}, () => this.props.stopTimer(this.state.stop));
     setTimeout(() => {
-      this.setState({ stop: false })
+      this.setState({stop: false});
     }, 30);
-  }
+  };
   render() {
     // console.log('For Time tell Me', this.props.forTime)
-    const { criteria } = this.state;
+    const {criteria} = this.state;
     if (this.props.playOnOrOff == true && this.state.isShow == false) {
       if (!this.state.time == 0) {
         setTimeout(() => {
-          this.setState({ isShow: true });
+          this.setState({isShow: true});
         }, 100);
         setTimeout(() => {
-          this.setState({ time: 0 });
+          this.setState({time: 0});
           setTimeout(() => {
-            this.setState({ isShow: false });
+            this.setState({isShow: false});
           }, 200);
         }, this.state.time * 1000);
       }
       if (!this.state.emomMinutes == 0) {
         setTimeout(() => {
-          this.setState({ isShow: true });
+          this.setState({isShow: true});
         }, 100);
         setTimeout(() => {
-          this.setState({ emomMinutes: 0 });
+          this.setState({emomMinutes: 0});
           setTimeout(() => {
-            this.setState({ isShow: false });
+            this.setState({isShow: false});
           }, 200);
         }, this.state.emomMinutes * 1000);
       }
@@ -3113,117 +3148,114 @@ export default class Programs extends Component {
             }>
             <Text style={style.chooseProgram}>
               {this.state.round == 0 &&
-                this.state.time == 0 &&
-                this.state.emomMinutes == 0 &&
-                this.state.tabataRounds == 0
+              this.state.time == 0 &&
+              this.state.emomMinutes == 0 &&
+              this.state.tabataRounds == 0
                 ? 'Program'
                 : store.getState().program.value}
             </Text>
-            {this.state.criteriaName == '15.2'
-              ? < TouchableOpacity
-                onPress={
-                  this.props.circle == true ? this.stopTimer : null
-                }>
-                <View style={{
-                  backgroundColor: '#FF6100',
-                  width: width * .07,
-                  height: height * .05,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: width * .003
-                }}>
-                  <Text style={{
-                    color: 'white',
-                    fontSize: width * .0205,
-                    fontFamily: Fonts.VarelaRoundRegular,
+            {this.state.criteriaName == '15.2' ? (
+              <TouchableOpacity
+                onPress={this.props.circle == true ? this.stopTimer : null}>
+                <View
+                  style={{
+                    backgroundColor: '#FF6100',
+                    width: width * 0.07,
+                    height: height * 0.05,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: width * 0.003,
                   }}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: width * 0.0205,
+                      fontFamily: Fonts.VarelaRoundRegular,
+                    }}>
                     Stop
-                </Text>
+                  </Text>
                 </View>
               </TouchableOpacity>
-              : null
-            }
-            {this.state.forTimeOrMinutes == 0 && this.state.data.type == 1
-              ? <Text style={{
-                fontSize: width * .018,
-                color: "white",
-                fontFamily: Fonts.VarelaRoundRegular,
-                borderRadius: width * .003,
-                borderWidth: width * .002,
-                borderColor: '#5F4B2F',
-                padding: width * .002,
-                paddingHorizontal: width * .004,
-                textAlign: 'center'
-              }}>
+            ) : null}
+            {this.state.forTimeOrMinutes == 0 && this.state.data.type == 1 ? (
+              <Text
+                style={{
+                  fontSize: width * 0.018,
+                  color: 'white',
+                  fontFamily: Fonts.VarelaRoundRegular,
+                  borderRadius: width * 0.003,
+                  borderWidth: width * 0.002,
+                  borderColor: '#5F4B2F',
+                  padding: width * 0.002,
+                  paddingHorizontal: width * 0.004,
+                  textAlign: 'center',
+                }}>
                 {this.state.data.type} Round For Time
               </Text>
-              : null
-            }
-            {this.state.forTimeOrMinutes == 0 && this.state.data.type > 1
-              ? <Text style={{
-                fontSize: width * .018,
-                color: "white",
-                fontFamily: Fonts.VarelaRoundRegular,
-                borderRadius: width * .003,
-                borderWidth: width * .002,
-                borderColor: '#5F4B2F',
-                padding: width * .002,
-                paddingHorizontal: width * .004,
-                textAlign: 'center'
-              }}>
+            ) : null}
+            {this.state.forTimeOrMinutes == 0 && this.state.data.type > 1 ? (
+              <Text
+                style={{
+                  fontSize: width * 0.018,
+                  color: 'white',
+                  fontFamily: Fonts.VarelaRoundRegular,
+                  borderRadius: width * 0.003,
+                  borderWidth: width * 0.002,
+                  borderColor: '#5F4B2F',
+                  padding: width * 0.002,
+                  paddingHorizontal: width * 0.004,
+                  textAlign: 'center',
+                }}>
                 {this.state.data.type} Rounds{'\n'} For Time
               </Text>
-              : null
-            }
-            {this.state.forTimeOrMinutes == 1
-              ? <Text style={{
-                fontSize: width * .018,
-                color: "white",
-                fontFamily: Fonts.VarelaRoundRegular,
-                borderRadius: width * .003,
-                borderWidth: width * .002,
-                borderColor: '#5F4B2F',
-                padding: width * .002,
-                paddingHorizontal: width * .004,
-                textAlign: 'center'
-              }}>
+            ) : null}
+            {this.state.forTimeOrMinutes == 1 ? (
+              <Text
+                style={{
+                  fontSize: width * 0.018,
+                  color: 'white',
+                  fontFamily: Fonts.VarelaRoundRegular,
+                  borderRadius: width * 0.003,
+                  borderWidth: width * 0.002,
+                  borderColor: '#5F4B2F',
+                  padding: width * 0.002,
+                  paddingHorizontal: width * 0.004,
+                  textAlign: 'center',
+                }}>
                 {this.state.data.type} Mins AMRAP
-                </Text>
-              : null
-            }
-            {this.state.forTimeOrMinutes == 2
-              ? <Text style={{
-                fontSize: width * .018,
-                color: "white",
-                fontFamily: Fonts.VarelaRoundRegular,
-                borderRadius: width * .003,
-                borderWidth: width * .002,
-                borderColor: '#5F4B2F',
-                padding: width * .002,
-                paddingHorizontal: width * .004,
-                textAlign: 'center'
-              }}>
+              </Text>
+            ) : null}
+            {this.state.forTimeOrMinutes == 2 ? (
+              <Text
+                style={{
+                  fontSize: width * 0.018,
+                  color: 'white',
+                  fontFamily: Fonts.VarelaRoundRegular,
+                  borderRadius: width * 0.003,
+                  borderWidth: width * 0.002,
+                  borderColor: '#5F4B2F',
+                  padding: width * 0.002,
+                  paddingHorizontal: width * 0.004,
+                  textAlign: 'center',
+                }}>
                 {this.state.data.type} Mins EMOM
-                </Text>
-              : null
-            }
+              </Text>
+            ) : null}
           </TouchableOpacity>
         </View>
         {/* <Criteria1 /> */}
-        {
-          criteria && (
-            <Criteria1
-              modalFalse={this.handleModalFalse}
-              isModalVisible={true}
-              criteriaName={this.handleCriteriaName}
-              selectedProgram={this.state.selectedProgram}
-              disableActivity={this.handleDisableActivity}
-              receiveDataFromChild={this.receiveDataFromChild}
-            />
-          )
-        }
-        { this.renderClockModal()}
-      </View >
+        {criteria && (
+          <Criteria1
+            modalFalse={this.handleModalFalse}
+            isModalVisible={true}
+            criteriaName={this.handleCriteriaName}
+            selectedProgram={this.state.selectedProgram}
+            disableActivity={this.handleDisableActivity}
+            receiveDataFromChild={this.receiveDataFromChild}
+          />
+        )}
+        {this.renderClockModal()}
+      </View>
     );
   }
 }

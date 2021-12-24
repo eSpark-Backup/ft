@@ -177,6 +177,7 @@ export default class App extends Component {
     RNSerialport.setInterface(parseInt(this.state.interface, 10));
     RNSerialport.setAutoConnect(true);
     RNSerialport.startUsbService();
+    this.props.handleRunSerial(false);
   }
   // ye function screen ke hatne ke baad usb listener khatam kardeta ha
   stopUsbListener = async () => {
@@ -190,14 +191,18 @@ export default class App extends Component {
   };
   // ye function sirf state change kar rahe hain har usb action pr
   onServiceStarted(response) {
-    this.setState({servisStarted: true});
+    this.setState({servisStarted: true}, () => {
+      this.props.handleServiceStatus(true);
+    });
     if (response.deviceAttached) {
       this.onDeviceAttached();
     }
   }
   // ye function sirf state change kar rahe hain har usb action pr
   onServiceStopped() {
-    this.setState({servisStarted: false});
+    this.setState({servisStarted: false}, () => {
+      this.props.handleServiceStatus(false);
+    });
   }
   // ye function sirf state change kar rahe hain har usb action pr
   onDeviceAttached() {
@@ -242,6 +247,11 @@ export default class App extends Component {
           }, 1000);
         });
         console.log('>>><<<<<>>><<<<>>>>>>>', typeof this.state.output);
+      } else if (this.state.output === 'PL') {
+        this.props.playTimer();
+        console.log(
+          clc.greenBright('Play Button Pressed on Hardware', this.state.output),
+        );
       } else if (Number.isInteger(numData)) {
         if (this.state.serialIndex > 0) {
           if (numData == this.state.temp) {
@@ -305,8 +315,10 @@ export default class App extends Component {
   handleSend = () => {
     RNSerialport.writeString('ACK');
   };
+
   //! ----------------------------------------- yahan tk hoa hai kaam serial device reading ka ----------------------------------------------------- !//
 
+  //? For BLE COMMANDS THIS IS NEEDED
   UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
       activity: nextProps.activity,
@@ -319,6 +331,12 @@ export default class App extends Component {
       if (this.props.bleData == 'R') {
         console.log(clc.bgGreen('ARAA hai VALUE KI', this.props.bleData));
         this.countRound();
+      }
+    }
+    if (this.props !== nextProps.runSerial) {
+      if (this.props.runSerial) {
+        this.startUsbListener();
+        console.log(clc.bgGreen('Function in Child Runs'));
       }
     }
   }
@@ -658,7 +676,10 @@ export default class App extends Component {
               borderRadius: width * 0.003,
               borderRadius: width * 0.1,
             }}
-            onPress={() => console.log('value')}>
+            onPress={() => {
+              console.log('value');
+              this.props.playTimer();
+            }}>
             <Text
               style={{
                 fontSize: height * 0.025,

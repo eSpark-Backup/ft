@@ -1,5 +1,4 @@
 const program = [
-
   //Angie
   {
     key: 'The Girls',
@@ -263,7 +262,7 @@ const program = [
   },
   {
     key: 'The Girls',
-    value: 'Pull U,
+    value: 'Pull U',
   },
   //Mary
   {
@@ -276,7 +275,7 @@ const program = [
   },
   {
     key: 'The Girls',
-    value: 'Pull U,
+    value: 'Pull U',
   },
   //Nancy
   {
@@ -294,6 +293,6 @@ const program = [
   },
   {
     key: 'The Girls',
-    value: 'Pull U,
+    value: 'Pull U',
   },
 ];

@@ -29,9 +29,7 @@ import style from './style';
 import SystemSetting from 'react-native-system-setting';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import BleManager from 'react-native-ble-manager';
-import RNBluetoothClassic, {
-  BluetoothDevice,
-} from 'react-native-bluetooth-classic';
+
 import BluetoothSerial from 'react-native-bluetooth-serial-next';
 import Buffer from 'buffer';
 import RNFS from 'react-native-fs';
@@ -144,6 +142,8 @@ export default class App extends Component {
       bleData: '',
       bleConnected: false,
       serialConnected: false,
+      serialService: false,
+      runSerial: false,
       settingData: [
         {
           key: '1',
@@ -164,16 +164,22 @@ export default class App extends Component {
         {
           key: '4',
           name: 'Settings',
-          value: 'Factory Reset',
-          note: 'Note: Deletes all data and memory',
+          value: 'Serial Service',
+          note: 'Current Status: ',
         },
         {
           key: '5',
           name: 'Settings',
-          value: 'Set Pin',
+          value: 'Factory Reset',
+          note: 'Note: Deletes all data and memory',
         },
         {
           key: '6',
+          name: 'Settings',
+          value: 'Set Pin',
+        },
+        {
+          key: '7',
           name: 'Settings',
           value: 'Contact Us',
         },
@@ -237,6 +243,11 @@ export default class App extends Component {
         {
           key: '1',
           name: 'Contact Us',
+        },
+        {
+          key: '1',
+          name: 'Serial Service',
+          value: 'Reset Serial Service',
         },
       ],
     };
@@ -387,8 +398,12 @@ export default class App extends Component {
   //handle new Activity send to Device
   handleSend = () => {
     if (this.state.serialConnected) {
-      console.log('New Activity Started');
-      RNSerialport.writeString('N');
+      console.log('New Activity Started By Play BUTTON');
+      // RNSerialport.writeString('N');
+      // setTimeout(() => {
+      RNSerialport.writeString('PACK');
+      console.log(clc.xterm(191)('Send PACK to Hardware'));
+      // }, 400);
     }
   };
 
@@ -404,7 +419,7 @@ export default class App extends Component {
       } else if (this.state.activity.length == 0) {
         alert('Please Select Activity');
       } else if (!this.state.forTimeRound == 0) {
-        // this.handleSend();
+        this.handleSend();
 
         setTimeout(() => {
           this.setState({onPlaying: !this.state.onPlaying});
@@ -630,6 +645,13 @@ export default class App extends Component {
       if (v.name == key.value) {
         filteredList.push(v);
         this.setState({filteredList});
+        if (key.value === 'Serial Service') {
+          this.setState({
+            settingsNote: `${key.note}${
+              this.state.serialService ? ' Active' : ' De-Active'
+            }`,
+          });
+        }
         if (key.value == 'Contact Us') {
           this.setState({contactVisible: true});
         }
@@ -694,6 +716,15 @@ export default class App extends Component {
       //   this.textInputRef.focus()
       //   this.setState({ openTheKeyboard: false });
       // }
+    } else if (key.value == 'Reset Serial Service') {
+      if (!this.state.serialService) {
+        this.setState({runSerial: true});
+        this.closeSettingsModal();
+        ToastAndroid.show('Serial Service Started', ToastAndroid.SHORT);
+      } else {
+        alert('Service already running');
+      }
+      // console.log('Need to Reset Service');
     }
   };
 
@@ -978,6 +1009,12 @@ export default class App extends Component {
   };
   handleEmomMinutesRange = (child) => {
     this.setState({emomMinutesRange: child});
+  };
+  handleServiceStatus = (child) => {
+    this.setState({serialService: child});
+  };
+  handleRunSerial = (child) => {
+    this.setState({runSerial: child});
   };
   stopTimer = (child) => {
     if (this.state.indexCondition == true) {
@@ -1419,7 +1456,11 @@ export default class App extends Component {
             bleMacId={this.state.bleMacId}
             bleData={this.state.bleData}
             isConnected={this.state.bleConnected}
+            handleServiceStatus={this.handleServiceStatus}
             serialConnected={this.handleSerialConnected}
+            playTimer={this.playTimer}
+            runSerial={this.state.runSerial}
+            handleRunSerial={this.handleRunSerial}
           />
           <Modal
             animationIn="slideInDown"
