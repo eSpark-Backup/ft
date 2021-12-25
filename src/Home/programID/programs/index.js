@@ -319,8 +319,10 @@ export default class Programs extends Component {
       tabataRest: 0,
       tabataRounds: 0,
     });
-    RNSerialport.writeString('M');
-    console.log('Send M to Device');
+    if (this.props.serialConnected) {
+      RNSerialport.writeString('M');
+      console.log('Send M to Device');
+    }
     setTimeout(() => {
       this.props.clearAll(!this.state.clearData),
         this.props.minutes(0),

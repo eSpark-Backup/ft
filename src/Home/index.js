@@ -269,8 +269,10 @@ export default class App extends Component {
   }
 
   componentWillUnmount() {
-    this.disconnectBTDevice();
-    clearInterval(this.readInterval);
+    if (this.state.bleConnected) {
+      this.disconnectBTDevice();
+      clearInterval(this.readInterval);
+    }
   }
 
   //* Requesting Bluetooth permission from the user
@@ -918,6 +920,7 @@ export default class App extends Component {
   handleCriteriaName = (child) => {
     // console.log(child, 'Criteria name is child')
     this.setState({criteriaValue: child});
+    console.log('Kia hai Creteirads', child);
   };
   handleTime = (child) => {
     this.setState({amrapTime: child});
@@ -1207,6 +1210,7 @@ export default class App extends Component {
                   tabataMinutes={this.handlePassingMinutes}
                   tabataRest={this.handlePassingRest}
                   tabataRounds={this.handlePassingRound}
+                  serialConnected={this.state.serialConnected}
                 />
                 <View
                   style={{
