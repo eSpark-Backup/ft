@@ -14,6 +14,7 @@ import {
   FlatList,
 } from 'react-native';
 
+import clc from 'cli-color';
 import style from './style';
 import {Icon} from 'react-native-material-ui';
 import Modal from 'react-native-modal';
@@ -235,7 +236,6 @@ import {
 import Criteria1 from '../criteria1';
 import Criteria2 from '../criteria2';
 
-import {RNSerialport} from 'react-native-serialport';
 import {Fonts} from '../../../utils/fonts';
 import {selectProgram} from '../../../Store/actions/program';
 import {selectTheGirls} from '../../../Store/actions/theGirls';
@@ -246,6 +246,8 @@ import CountDown from './../../Timer/timer1Modal/countDown';
 import EMOM from './../../Timer/timer1Modal/emom';
 import Tabata from './../../Timer/timer1Modal/tabata';
 import Clock from './../../Timer/timer1Modal/clock';
+
+import {RNSerialport} from 'react-native-serialport';
 
 const {height, width} = Dimensions.get('window');
 
@@ -2635,6 +2637,12 @@ export default class Programs extends Component {
       return manageAllTheData(open151);
     }
     if (item.value == '15.2') {
+      console.log(clc.xterm(194)('WE GOT the 15.2--->>>>>>>'));
+      if (this.props.serialConnected) {
+        setTimeout(() => {
+          RNSerialport.writeString('SA');
+        }, 800);
+      }
       this.setState({data: open152});
       this.setState({forTimeOrMinutes: 0});
       setTimeout(() => {
@@ -3107,12 +3115,17 @@ export default class Programs extends Component {
       </Modal>
     );
   };
+
   stopTimer = () => {
     this.setState({stop: true}, () => this.props.stopTimer(this.state.stop));
     setTimeout(() => {
+      if (this.props.serialConnected) {
+        RNSerialport.writeString('SACK');
+      }
       this.setState({stop: false});
     }, 30);
   };
+
   render() {
     // console.log('For Time tell Me', this.props.forTime)
     const {criteria} = this.state;

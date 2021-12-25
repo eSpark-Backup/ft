@@ -252,6 +252,11 @@ export default class App extends Component {
         console.log(
           clc.greenBright('Play Button Pressed on Hardware', this.state.output),
         );
+      } else if (this.state.output === 'S') {
+        this.props.stopTimer(true);
+        console.log(
+          clc.xterm(211)('Stop Button Pressed on Hardware', this.state.output),
+        );
       } else if (Number.isInteger(numData)) {
         if (this.state.serialIndex > 0) {
           if (numData == this.state.temp) {

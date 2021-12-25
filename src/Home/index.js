@@ -1465,6 +1465,7 @@ export default class App extends Component {
             playTimer={this.playTimer}
             runSerial={this.state.runSerial}
             handleRunSerial={this.handleRunSerial}
+            stopTimer={this.stopTimer}
           />
           <Modal
             animationIn="slideInDown"
