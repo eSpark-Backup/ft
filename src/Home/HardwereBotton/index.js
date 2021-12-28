@@ -117,6 +117,7 @@ export default class App extends Component {
       temp: 1,
       serialModal: false,
       serialRound: false,
+      stop: false,
     };
     //* ye hamare listener lage hain functions pr jo check karte rehte hai usb port pr
     this.startUsbListener = this.startUsbListener.bind(this);
@@ -252,8 +253,9 @@ export default class App extends Component {
         console.log(
           clc.greenBright('Play Button Pressed on Hardware', this.state.output),
         );
-      } else if (this.state.output === 'S') {
-        this.props.stopTimer(true);
+      } else if (this.state.output === 'SA') {
+        // this.props.stopTimer(true);
+        this.setState({stop: true});
         console.log(
           clc.xterm(211)('Stop Button Pressed on Hardware', this.state.output),
         );
@@ -310,16 +312,34 @@ export default class App extends Component {
     }
     this.setState({output: data});
   }
+
   // ye function read data ki state clear kar raha hai
   handleClearButton() {
     this.setState({output: ''});
     this.setState({outputArray: []});
   }
-  // ye function data string me data send kar rhaa hai
 
+  // ye function data string me data send kar rhaa hai
   handleSend = () => {
     RNSerialport.writeString('ACK');
   };
+
+  componentDidUpdate(prevProps, pervState) {
+    if (this.state.stop !== pervState.stop) {
+      console.log('XXX++++??????>>>>>>', this.state.stop);
+      if (this.state.stop) {
+        console.log('<<<<<<<<<<<<<<<<<GOGOGOGOGOGOG', this.state.stop);
+        this.props.stopTimer(true);
+        this.setState({
+          stop: false,
+          activiyValue: 1,
+          bluetoothIndex: 1,
+          serialIndex: 1,
+          temp: 1,
+        });
+      }
+    }
+  }
 
   //! ----------------------------------------- yahan tk hoa hai kaam serial device reading ka ----------------------------------------------------- !//
 
@@ -683,7 +703,7 @@ export default class App extends Component {
             }}
             onPress={() => {
               console.log('value');
-              this.props.playTimer();
+              this.props.stopTimer(true);
             }}>
             <Text
               style={{

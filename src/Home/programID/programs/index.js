@@ -2637,10 +2637,10 @@ export default class Programs extends Component {
       return manageAllTheData(open151);
     }
     if (item.value == '15.2') {
-      console.log(clc.xterm(194)('WE GOT the 15.2--->>>>>>>'));
       if (this.props.serialConnected) {
         setTimeout(() => {
-          RNSerialport.writeString('SA');
+          RNSerialport.writeString('S');
+          console.log(clc.xterm(194)('Sent S--->>>>>>>'));
         }, 800);
       }
       this.setState({data: open152});
@@ -3119,9 +3119,6 @@ export default class Programs extends Component {
   stopTimer = () => {
     this.setState({stop: true}, () => this.props.stopTimer(this.state.stop));
     setTimeout(() => {
-      if (this.props.serialConnected) {
-        RNSerialport.writeString('SACK');
-      }
       this.setState({stop: false});
     }, 30);
   };

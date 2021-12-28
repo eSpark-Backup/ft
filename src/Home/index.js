@@ -1022,6 +1022,13 @@ export default class App extends Component {
   stopTimer = (child) => {
     if (this.state.indexCondition == true) {
       this.setState({stop: child});
+      console.log('CHAla Stop Timer>>>>>><<<<<<<<< HOME');
+      // setTimeout(() => {
+      //   if (this.state.serialConnected) {
+      //     RNSerialport.writeString('K');
+      //     console.log(clc.xterm(175)('Sent K to serial'));
+      //   }
+      // }, 1500);
       setTimeout(() => {
         this.setState({stop: false});
       }, 50);
