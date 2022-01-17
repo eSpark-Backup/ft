@@ -321,7 +321,7 @@ export default class Programs extends Component {
       tabataRest: 0,
       tabataRounds: 0,
     });
-    if (this.props.serialConnected) {
+    if (this.props.serialConnected && !this.props.bluetoothOn) {
       RNSerialport.writeString('M');
       console.log('Send M to Device');
     }
@@ -2637,7 +2637,7 @@ export default class Programs extends Component {
       return manageAllTheData(open151);
     }
     if (item.value == '15.2') {
-      if (this.props.serialConnected) {
+      if (this.props.serialConnected && !this.props.bluetoothOn) {
         setTimeout(() => {
           RNSerialport.writeString('S');
           console.log(clc.xterm(194)('Sent S--->>>>>>>'));

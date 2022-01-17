@@ -38,7 +38,7 @@ import RNFS from 'react-native-fs';
 // import Swiper from 'react-native-swiper';
 // import CodeInput from 'react-native-confirmation-code-input';
 // import OTPInputView from '@twotalltotems/react-native-otp-input';
-// import { TextInput } from 'react-native-paper';
+import {Switch} from 'react-native-paper';
 import Memory from './programID/memoryRecall';
 import MemorySave from './programID/mermorySave';
 
@@ -144,6 +144,7 @@ export default class App extends Component {
       serialConnected: false,
       serialService: false,
       runSerial: false,
+      isBluetoothOn: false,
       settingData: [
         {
           key: '1',
@@ -249,6 +250,14 @@ export default class App extends Component {
           name: 'Serial Service',
           value: 'Reset Serial Service',
         },
+        {
+          key: '2',
+          name: 'Serial Service',
+          value: 'Connection Mode',
+          item1: 'Serial',
+          item2: 'Bluetooth',
+          switch: true,
+        },
       ],
     };
   }
@@ -335,6 +344,12 @@ export default class App extends Component {
     });
   };
 
+  onToggleSwitch = () => {
+    this.setState({
+      isBluetoothOn: !this.state.isBluetoothOn,
+    });
+  };
+
   //* Permissions Module that saves the granted permissions once and for all
   _askPermission = async () => {
     try {
@@ -399,7 +414,7 @@ export default class App extends Component {
 
   //handle new Activity send to Device
   handleSend = () => {
-    if (this.state.serialConnected) {
+    if (this.state.serialConnected && !this.state.isBluetoothOn) {
       console.log('New Activity Started By Play BUTTON');
       // RNSerialport.writeString('N');
       // setTimeout(() => {
@@ -546,11 +561,13 @@ export default class App extends Component {
     </TouchableOpacity>
   );
 
-  _renderInnerSettingList = ({item}) => (
-    <TouchableOpacity onPress={() => this.DoSetting(item)}>
+  _renderInnerSettingList = ({item}) =>
+    item.switch ? (
       <View
         style={{
-          borderColor: 'white',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
           borderWidth: height * 0.002,
           borderRadius: width * 0.005,
           borderColor: '#EDB0A6',
@@ -560,15 +577,68 @@ export default class App extends Component {
         }}>
         <Text
           style={{
+            alignSelf: 'flex-start',
             color: 'white',
             fontSize: width * 0.018,
             fontFamily: Fonts.VarelaRoundRegular,
           }}>
           {item.key}. {item.value}
         </Text>
+        <View
+          style={{
+            flex: 1,
+            height: height * 0.15,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontSize: width * 0.018,
+              fontFamily: Fonts.VarelaRoundRegular,
+            }}>
+            {item.item1}
+          </Text>
+          <Switch
+            value={this.state.isBluetoothOn}
+            onValueChange={this.onToggleSwitch}
+            color="#FF6100"
+            trackColor={{true: '#803100', false: '#803100'}}
+            thumbColor={'#FF6100'}
+          />
+          <Text
+            style={{
+              color: 'white',
+              fontSize: width * 0.018,
+              fontFamily: Fonts.VarelaRoundRegular,
+            }}>
+            {item.item2}
+          </Text>
+        </View>
       </View>
-    </TouchableOpacity>
-  );
+    ) : (
+      <TouchableOpacity onPress={() => this.DoSetting(item)}>
+        <View
+          style={{
+            borderColor: 'white',
+            borderWidth: height * 0.002,
+            borderRadius: width * 0.005,
+            borderColor: '#EDB0A6',
+            width: width * 0.23,
+            paddingHorizontal: width * 0.01,
+            marginVertical: height * 0.02,
+          }}>
+          <Text
+            style={{
+              color: 'white',
+              fontSize: width * 0.018,
+              fontFamily: Fonts.VarelaRoundRegular,
+            }}>
+            {item.key}. {item.value}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
 
   _renderBTList = ({item}) => {
     return (
@@ -1218,6 +1288,7 @@ export default class App extends Component {
                   tabataRest={this.handlePassingRest}
                   tabataRounds={this.handlePassingRound}
                   serialConnected={this.state.serialConnected}
+                  bluetoothOn={this.state.isBluetoothOn}
                 />
                 <View
                   style={{
@@ -1450,6 +1521,7 @@ export default class App extends Component {
             tabataCon={this.state.tabataCon}
             fullScreen={this.state.fullScreen}
             serialConnected={this.state.serialConnected}
+            bluetoothOn={this.state.isBluetoothOn}
           />
           <HardwereBotton
             hardValue={this.handleHardValue}
@@ -1473,6 +1545,7 @@ export default class App extends Component {
             runSerial={this.state.runSerial}
             handleRunSerial={this.handleRunSerial}
             stopTimer={this.stopTimer}
+            bluetoothOn={this.state.isBluetoothOn}
           />
           <Modal
             animationIn="slideInDown"

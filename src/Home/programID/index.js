@@ -128,6 +128,7 @@ export default class App extends Component {
           tabataRest={this.handlePassingRest}
           tabataRounds={this.handlePassingRound}
           serialConnected={this.props.serialConnected}
+          bluetoothOn={this.props.bluetoothOn}
         />
       </View>
     );

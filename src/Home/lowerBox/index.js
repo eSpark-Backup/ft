@@ -934,7 +934,7 @@ export default class App extends Component {
           this.setState({index: this.state.index + 1});
           this.props.hardValueDone(true);
         }, 50);
-        if (this.props.serialConnected) {
+        if (this.props.serialConnected && !this.props.bluetoothOn) {
           RNSerialport.writeString('ACK');
           console.log(clc.xterm(105)('XXXXX----SENT ACK----XXXXX'));
         }

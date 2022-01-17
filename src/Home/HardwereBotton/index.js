@@ -239,48 +239,63 @@ export default class App extends Component {
       this.setState({output: payload});
     }
     const numData = parseInt(this.state.output);
-    try {
-      if (this.state.output === 'R') {
-        this.setState({serialRound: true}, () => {
-          this._handleSerialRound(this.state.serialRound);
-          setTimeout(() => {
-            this.setState({serialRound: false});
-          }, 1000);
-        });
-        console.log('>>><<<<<>>><<<<>>>>>>>', typeof this.state.output);
-      } else if (this.state.output === 'PL') {
-        this.props.playTimer();
-        console.log(
-          clc.greenBright('Play Button Pressed on Hardware', this.state.output),
-        );
-      } else if (this.state.output === 'SA') {
-        // this.props.stopTimer(true);
-        this.setState({stop: true});
-        console.log(
-          clc.xterm(211)('Stop Button Pressed on Hardware', this.state.output),
-        );
-      } else if (Number.isInteger(numData)) {
-        if (this.state.serialIndex > 0) {
-          if (numData == this.state.temp) {
-            //? Expected Result output only
+    if (!this.props.bluetoothOn) {
+      try {
+        if (this.state.output === 'R') {
+          this.setState({serialRound: true}, () => {
+            this._handleSerialRound(this.state.serialRound);
             setTimeout(() => {
-              this.hardwereBottonWork(numData);
-              console.log(clc.bgRed('hello ye chala+++++++++++++++', numData));
-              console.log(
-                clc.bgRed('what is serial Index', this.state.serialIndex),
-              );
-            }, 800);
-          } else {
-            console.log(clc.greenBright('Didnt Get Expected Value', numData));
-            console.log('Need thi Value', this.state.temp);
+              this.setState({serialRound: false});
+            }, 1000);
+          });
+          console.log('>>><<<<<>>><<<<>>>>>>>', typeof this.state.output);
+        } else if (this.state.output === 'PL') {
+          this.props.playTimer();
+          console.log(
+            clc.greenBright(
+              'Play Button Pressed on Hardware',
+              this.state.output,
+            ),
+          );
+        } else if (this.state.output === 'SA') {
+          // this.props.stopTimer(true);
+          this.setState({stop: true});
+          console.log(
+            clc.xterm(211)(
+              'Stop Button Pressed on Hardware',
+              this.state.output,
+            ),
+          );
+        } else if (Number.isInteger(numData)) {
+          if (this.state.serialIndex > 0) {
+            if (numData == this.state.temp) {
+              //? Expected Result output only
+              setTimeout(() => {
+                this.hardwereBottonWork(numData);
+                console.log(
+                  clc.bgRed('hello ye chala+++++++++++++++', numData),
+                );
+                console.log(
+                  clc.bgRed('what is serial Index', this.state.serialIndex),
+                );
+              }, 800);
+            } else {
+              console.log(clc.greenBright('Didnt Get Expected Value', numData));
+              console.log('Need thi Value', this.state.temp);
+            }
           }
+        } else {
+          RNSerialport.writeString('NACK');
+          console.log(clc.yellowBright('Ghalat Cheez mili', this.state.output));
         }
-      } else {
-        RNSerialport.writeString('NACK');
-        console.log(clc.yellowBright('Ghalat Cheez mili', this.state.output));
+      } catch (e) {
+        console.log('Error', e);
       }
-    } catch (e) {
-      console.log('Error', e);
+    } else {
+      if (this.state.output !== '') {
+        // ToastAndroid.show('Connection Mode is Bluetooth', ToastAndroid.SHORT);
+        console.log('CAnnot Read from Serial Connetion is Bluetooth');
+      }
     }
   }
 
@@ -326,42 +341,54 @@ export default class App extends Component {
 
   componentDidUpdate(prevProps, pervState) {
     if (this.state.stop !== pervState.stop) {
-      console.log('XXX++++??????>>>>>>', this.state.stop);
-      if (this.state.stop) {
-        console.log('<<<<<<<<<<<<<<<<<GOGOGOGOGOGOG', this.state.stop);
-        this.props.stopTimer(true);
-        this.setState({
-          stop: false,
-          activiyValue: 1,
-          bluetoothIndex: 1,
-          serialIndex: 1,
-          temp: 1,
-        });
+      if (this.state.connected && !this.props.bluetoothOn) {
+        console.log('XXX++++??????>>>>>>', this.state.stop);
+        if (this.state.stop) {
+          console.log('<<<<<<<<<<<<<<<<<GOGOGOGOGOGOGO', this.state.stop);
+          this.props.stopTimer(true);
+          this.setState({
+            stop: false,
+            activiyValue: 1,
+            bluetoothIndex: 1,
+            serialIndex: 1,
+            temp: 1,
+          });
+        }
+      } else {
+        // ToastAndroid.show('Connection mode is Bluetooth', ToastAndroid.SHORT);
+        console.log('CAnnot Read from Serial Connetion is Bluetooth Update');
       }
     }
   }
 
   //! ----------------------------------------- yahan tk hoa hai kaam serial device reading ka ----------------------------------------------------- !//
 
-  //? For BLE COMMANDS THIS IS NEEDED
+  //? For #fff BLE COMMANDS THIS IS NEEDED
   UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({
-      activity: nextProps.activity,
-    });
-    if (this.props !== nextProps.bleData) {
-      if (this.props.bleData == 'D') {
-        console.log(clc.bgRed('ARAA hai VALUE KI', this.props.bleData));
-        this.bluetoothButtonWork(this.props.bleData);
+    if (this.props.bluetoothOn) {
+      this.setState({
+        activity: nextProps.activity,
+      });
+      if (this.props !== nextProps.bleData) {
+        if (this.props.bleData == 'D') {
+          console.log(clc.bgRed('ARAA hai VALUE KI', this.props.bleData));
+          this.bluetoothButtonWork(this.props.bleData);
+        }
+        if (this.props.bleData == 'R') {
+          console.log(clc.bgGreen('ARAA hai VALUE KI', this.props.bleData));
+          this.countRound();
+        }
       }
-      if (this.props.bleData == 'R') {
-        console.log(clc.bgGreen('ARAA hai VALUE KI', this.props.bleData));
-        this.countRound();
+      if (this.props !== nextProps.runSerial) {
+        if (this.props.runSerial) {
+          this.startUsbListener();
+          console.log(clc.bgGreen('Function in Child Runs'));
+        }
       }
-    }
-    if (this.props !== nextProps.runSerial) {
-      if (this.props.runSerial) {
-        this.startUsbListener();
-        console.log(clc.bgGreen('Function in Child Runs'));
+    } else {
+      if (this.props !== nextProps) {
+        // ToastAndroid.show('Connection mode is Serial', ToastAndroid.SHORT);
+        console.log('CAnnot Read from Bluetooth Connetion is Serial');
       }
     }
   }
@@ -373,7 +400,7 @@ export default class App extends Component {
       this.setState({bluetoothIndex: 1});
       this.setState({serialIndex: 1});
       this.setState({temp: 1});
-      if (this.state.connected) {
+      if (this.state.connected && !this.props.bluetoothOn) {
         RNSerialport.writeString('N');
       }
       console.log(clc.xterm(172)('Reset Temp'));
@@ -489,7 +516,7 @@ export default class App extends Component {
   countRound = () => {
     if (this.state.isShow == true && this.state.emomCondition == false) {
       if (this.state.runningCondtion == true) {
-        if (this.state.connected) {
+        if (this.state.connected && !this.props.bluetoothOn) {
           console.log(clc.xterm(172)('Reset Serial Comm'));
           RNSerialport.writeString('N');
         }
