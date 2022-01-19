@@ -321,7 +321,7 @@ export default class Programs extends Component {
       tabataRest: 0,
       tabataRounds: 0,
     });
-    if (this.props.serialConnected && !this.props.bluetoothOn) {
+    if (this.props.serialConnected) {
       RNSerialport.writeString('M');
       console.log('Send M to Device');
     }

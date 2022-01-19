@@ -239,6 +239,16 @@ export default class App extends Component {
       this.setState({output: payload});
     }
     const numData = parseInt(this.state.output);
+    try {
+      if (this.state.output === 'PL') {
+        this.props.playTimer();
+        console.log(
+          clc.greenBright('Play Button Pressed on Hardware', this.state.output),
+        );
+      }
+    } catch (error) {
+      console.log('Kia hai ', error);
+    }
     if (!this.props.bluetoothOn) {
       try {
         if (this.state.output === 'R') {
@@ -249,14 +259,6 @@ export default class App extends Component {
             }, 1000);
           });
           console.log('>>><<<<<>>><<<<>>>>>>>', typeof this.state.output);
-        } else if (this.state.output === 'PL') {
-          this.props.playTimer();
-          console.log(
-            clc.greenBright(
-              'Play Button Pressed on Hardware',
-              this.state.output,
-            ),
-          );
         } else if (this.state.output === 'SA') {
           // this.props.stopTimer(true);
           this.setState({stop: true});

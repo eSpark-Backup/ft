@@ -62,7 +62,6 @@ import {bytesToString} from 'convert-string';
 
 import {Calculator} from 'react-native-calculator';
 import Modal from 'react-native-modal';
-import {circIn} from 'eases';
 import clc from 'cli-color';
 
 let currentTime;
@@ -145,6 +144,7 @@ export default class App extends Component {
       serialService: false,
       runSerial: false,
       isBluetoothOn: false,
+      disableSwitch: false,
       settingData: [
         {
           key: '1',
@@ -345,9 +345,24 @@ export default class App extends Component {
   };
 
   onToggleSwitch = () => {
-    this.setState({
-      isBluetoothOn: !this.state.isBluetoothOn,
-    });
+    this.setState(
+      {
+        isBluetoothOn: !this.state.isBluetoothOn,
+      },
+      () => {
+        if (this.state.isBluetoothOn) {
+          if (this.state.serialConnected) {
+            RNSerialport.writeString('B');
+          }
+          console.log('BT');
+        } else {
+          if (this.state.serialConnected) {
+            RNSerialport.writeString('Z');
+          }
+          console.log('Serial');
+        }
+      },
+    );
   };
 
   //* Permissions Module that saves the granted permissions once and for all
@@ -414,13 +429,11 @@ export default class App extends Component {
 
   //handle new Activity send to Device
   handleSend = () => {
-    if (this.state.serialConnected && !this.state.isBluetoothOn) {
+    if (this.state.serialConnected) {
       console.log('New Activity Started By Play BUTTON');
       // RNSerialport.writeString('N');
-      // setTimeout(() => {
       RNSerialport.writeString('PACK');
       console.log(clc.xterm(191)('Send PACK to Hardware'));
-      // }, 400);
     }
   };
 
@@ -456,6 +469,7 @@ export default class App extends Component {
       } else if (!this.state.amrapTime == 0) {
         // console.log('ye wala ager chhala to')
         this.handleSend();
+        this.setState({disableSwitch: true});
         setTimeout(() => {
           this.setState({onPlaying: true});
           RNBeep.beep(false);
@@ -473,21 +487,30 @@ export default class App extends Component {
           });
         }, 1000 * this.state.duration - 3000);
         setTimeout(() => {
-          this.setState({
-            onPlaying: false,
-            showFullScreen: true,
-            // uniqueValue: this.state.uniqueValue + 1,
-            // circle: false,
-            totalTime: 0,
-            amrapTime: 0,
-            activity: [],
-            programCondition: false,
-            timeLap: [],
-            // roundIndex:0
-          });
+          this.setState(
+            {
+              onPlaying: false,
+              showFullScreen: true,
+              // uniqueValue: this.state.uniqueValue + 1,
+              // circle: false,
+              totalTime: 0,
+              amrapTime: 0,
+              activity: [],
+              programCondition: false,
+              timeLap: [],
+              // roundIndex:0
+            },
+            () => {
+              console.log(clc.xterm(196)('Program Khatam hogaya Amrap'));
+              if (this.state.serialConnected) {
+                RNSerialport.writeString('X');
+              }
+            },
+          );
         }, this.state.amrapTime * 1000 + 10 * 1000);
       } else if (!this.state.emomMinutes == 0) {
         this.handleSend();
+        this.setState({disableSwitch: true});
         setTimeout(() => {
           this.setState({onPlaying: !this.state.onPlaying});
         }, 10 * 1000 + 500);
@@ -519,6 +542,7 @@ export default class App extends Component {
       }
     } else {
       this.handleSend();
+      this.setState({disableSwitch: true});
       setTimeout(() => {
         this.setState({onPlaying: !this.state.onPlaying});
       }, 10 * 1000 + 500);
@@ -600,6 +624,7 @@ export default class App extends Component {
             {item.item1}
           </Text>
           <Switch
+            disabled={this.state.disableSwitch}
             value={this.state.isBluetoothOn}
             onValueChange={this.onToggleSwitch}
             color="#FF6100"
@@ -1267,6 +1292,7 @@ export default class App extends Component {
                 stop={this.state.stop}
                 tabataCon={this.state.tabataCon}
                 tabataRounds={this.state.tabataRounds}
+                serialConnected={this.state.serialConnected}
               />
               <View
                 style={{
@@ -1501,6 +1527,7 @@ export default class App extends Component {
             fullScreen={this.handleFullScreen}
             screeShot={this.handleScreenShot}
             showFullScreen={this.state.showFullScreen}
+            serialConnected={this.state.serialConnected}
           />
           <LowerBox
             amrap={this.state.amrapTime}

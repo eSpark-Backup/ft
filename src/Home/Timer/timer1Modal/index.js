@@ -45,9 +45,11 @@ import CountDown from './countDown';
 import EMOM from './emom';
 import Tabata from './tabata';
 import Clock from './clock';
+import {RNSerialport} from 'react-native-serialport';
 import {handleAmrapTime} from './fnOfGetValue';
 import Modal from 'react-native-modal';
 import RNBeep from 'react-native-a-beep';
+import clc from 'cli-color';
 
 const Sound = require('react-native-sound');
 let song = new Sound('beep.mp3', Sound.MAIN_BUNDLE, (error) => {
@@ -767,6 +769,7 @@ export default class App extends Component {
       });
     }
   };
+
   handleEmom = (child) => {
     this.setState({selectTime: child});
     if (child == true) {
@@ -777,6 +780,7 @@ export default class App extends Component {
       });
     }
   };
+
   handleTabata = (child) => {
     this.setState({selectTime: child});
     if (child == true) {
@@ -787,6 +791,7 @@ export default class App extends Component {
       });
     }
   };
+
   handleClock = (child) => {
     this.setState({selectTime: child});
     if (child == true) {
@@ -797,9 +802,11 @@ export default class App extends Component {
       });
     }
   };
+
   addTheValue = () => {
     const time = this.state.miliseconds.reduce((a, b) => a + b, 0);
   };
+
   startDown = () => {
     const {index, miliseconds, rest, indexRest} = this.state;
     this.secCountDown = setInterval(() => {
@@ -816,6 +823,7 @@ export default class App extends Component {
       });
     }, 996.000000000000005);
   };
+
   startLap = () => {
     this.secLap = setInterval(
       () => {
@@ -885,6 +893,7 @@ export default class App extends Component {
     this.startDown();
     this.setState({startDisabled: true, stopDisabled: false});
   };
+
   onButtonStop = () => {
     clearInterval(this.secCountDown);
     clearInterval(this.secLap);
@@ -904,6 +913,7 @@ export default class App extends Component {
       });
     }, 3000);
   };
+
   handleRestTimer = () => {
     const {
       index,
@@ -971,6 +981,7 @@ export default class App extends Component {
       null;
     } else if (!this.props.forTimeRound == 0) {
       RNBeep.beep(false);
+
       setTimeout(() => {
         this.startUp();
         this.startLap();
@@ -979,6 +990,7 @@ export default class App extends Component {
       }, 100);
     } else if (!this.props.tabataRounds == 0) {
       RNBeep.beep(false);
+
       setTimeout(() => {
         this.startUp();
         this.startLap();
@@ -987,6 +999,7 @@ export default class App extends Component {
       }, 100);
     } else if (!this.props.amrap == 0) {
       RNBeep.beep(false);
+
       setTimeout(() => {
         this.startDown();
         this.startLap();
@@ -1025,6 +1038,7 @@ export default class App extends Component {
       }, 500);
     } else if (!this.props.emomMinutes == 0) {
       RNBeep.beep(false);
+
       setTimeout(() => {
         this.startDown();
         // this.startLap();
@@ -1097,7 +1111,7 @@ export default class App extends Component {
       allData.push(totalMinute + ':' + totalSecond);
       this.setState({totalTimeArray: allData, index: 0});
       setTimeout(() => {
-        // console.log(this.state.totalTimeArray, 'timeArray')
+        console.log(clc.cyanBright('Chala hai total time'));
         this.props.totalTimeArr(this.state.totalTimeArray);
       }, 50);
     }
@@ -1189,6 +1203,11 @@ export default class App extends Component {
       setTimeout(() => {
         song.stop();
         RNBeep.beep(false);
+        console.log(clc.xterm(196)('Program Khatam hogaya fortime'));
+        if (this.props.serialConnected) {
+          RNSerialport.writeString('X');
+          console.log('X gaya Serially');
+        }
       }, 3500);
       setTimeout(() => {
         this.setState({forTimeRoundCon: false});
@@ -1209,6 +1228,10 @@ export default class App extends Component {
       }, 200);
       setTimeout(() => {
         song.stop();
+        console.log(clc.xterm(196)('Program Khatam hogaya tabata'));
+        if (this.props.serialConnected) {
+          RNSerialport.writeString('X');
+        }
       }, 3500);
       setTimeout(() => {
         this.setState({tabataCon: false});
