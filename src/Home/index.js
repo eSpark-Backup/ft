@@ -290,10 +290,6 @@ export default class App extends Component {
       .then(() => {
         console.log('The bluetooth is already enabled or the user confirmed');
         this.setState({blueE: true});
-        // BleManager.start().then(() => {
-        //   // Success code
-        //   console.log('Module initialized');
-        // });
       })
       .catch(() => {
         Alert.alert(
@@ -408,7 +404,6 @@ export default class App extends Component {
   checkWifi = () => {
     SystemSetting.isWifiEnabled().then((enable) => {
       this.state.onOff = enable ? 'On' : 'Off';
-      // console.log('Current Wifi is ' + this.state.onOff);
       if (this.state.onOff == 'On') {
         ToastAndroid.show('Wifi is Connected', ToastAndroid.SHORT);
         this.setState({blueOpt: true});
@@ -416,8 +411,6 @@ export default class App extends Component {
         this.toggleWifi();
         this.setState({blueOpt: false});
       }
-      // this.checkWifi()
-      // console.log(this.state.blueOpt)
     });
   };
 
@@ -431,7 +424,6 @@ export default class App extends Component {
   handleSend = () => {
     if (this.state.serialConnected) {
       console.log('New Activity Started By Play BUTTON');
-      // RNSerialport.writeString('N');
       RNSerialport.writeString('PACK');
       console.log(clc.xterm(191)('Send PACK to Hardware'));
     }
@@ -563,24 +555,8 @@ export default class App extends Component {
 
   _renderSettingList = ({item}) => (
     <TouchableOpacity onPress={() => this.filterList(item)}>
-      <View
-        style={{
-          borderColor: 'white',
-          borderWidth: height * 0.002,
-          borderRadius: width * 0.005,
-          borderColor: '#EDB0A6',
-          paddingHorizontal: width * 0.04,
-          marginVertical: height * 0.03,
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'white',
-            fontSize: width * 0.018,
-            fontFamily: Fonts.VarelaRoundRegular,
-          }}>
-          {item.value}
-        </Text>
+      <View style={style.mainSettingListContainer}>
+        <Text style={style.settingListText}>{item.value}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -588,41 +564,25 @@ export default class App extends Component {
   _renderInnerSettingList = ({item}) =>
     item.switch ? (
       <View
-        style={{
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderWidth: height * 0.002,
-          borderRadius: width * 0.005,
-          borderColor: '#EDB0A6',
-          width: width * 0.23,
-          paddingHorizontal: width * 0.01,
-          marginVertical: height * 0.02,
-        }}>
+        style={[
+          style.innerSettingListContainer,
+          {
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          },
+        ]}>
         <Text
-          style={{
-            alignSelf: 'flex-start',
-            color: 'white',
-            fontSize: width * 0.018,
-            fontFamily: Fonts.VarelaRoundRegular,
-          }}>
+          style={[
+            style.settingListText,
+            {
+              alignSelf: 'flex-start',
+            },
+          ]}>
           {item.key}. {item.value}
         </Text>
-        <View
-          style={{
-            flex: 1,
-            height: height * 0.15,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              color: 'white',
-              fontSize: width * 0.018,
-              fontFamily: Fonts.VarelaRoundRegular,
-            }}>
-            {item.item1}
-          </Text>
+        <View style={style.innerTextContainer}>
+          <Text style={style.settingListText}>{item.item1}</Text>
           <Switch
             disabled={this.state.disableSwitch}
             value={this.state.isBluetoothOn}
@@ -631,34 +591,13 @@ export default class App extends Component {
             trackColor={{true: '#803100', false: '#803100'}}
             thumbColor={'#FF6100'}
           />
-          <Text
-            style={{
-              color: 'white',
-              fontSize: width * 0.018,
-              fontFamily: Fonts.VarelaRoundRegular,
-            }}>
-            {item.item2}
-          </Text>
+          <Text style={style.settingListText}>{item.item2}</Text>
         </View>
       </View>
     ) : (
       <TouchableOpacity onPress={() => this.DoSetting(item)}>
-        <View
-          style={{
-            borderColor: 'white',
-            borderWidth: height * 0.002,
-            borderRadius: width * 0.005,
-            borderColor: '#EDB0A6',
-            width: width * 0.23,
-            paddingHorizontal: width * 0.01,
-            marginVertical: height * 0.02,
-          }}>
-          <Text
-            style={{
-              color: 'white',
-              fontSize: width * 0.018,
-              fontFamily: Fonts.VarelaRoundRegular,
-            }}>
+        <View style={style.innerSettingListContainer}>
+          <Text style={style.settingListText}>
             {item.key}. {item.value}
           </Text>
         </View>
@@ -668,29 +607,17 @@ export default class App extends Component {
   _renderBTList = ({item}) => {
     return (
       <TouchableOpacity onPress={() => this.connectBTDevice(item)}>
-        <View
-          style={{
-            borderBottomWidth: height * 0.002,
-            borderColor: '#EDB0A6',
-            width: width * 0.32,
-            // backgroundColor: 'yellow',
-            paddingHorizontal: width * 0.01,
-            paddingVertical: height * 0.015,
-          }}>
-          <Text
-            style={{
-              color: 'white',
-              fontSize: width * 0.018,
-              fontFamily: Fonts.VarelaRoundRegular,
-            }}>
+        <View style={style.btListContainer}>
+          <Text style={style.settingListText}>
             {item.name == null ? 'N/A' : item.name}
           </Text>
           <Text
-            style={{
-              color: 'white',
-              fontSize: width * 0.014,
-              fontFamily: Fonts.VarelaRoundRegular,
-            }}>
+            style={[
+              style.settingListText,
+              {
+                fontSize: width * 0.014,
+              },
+            ]}>
             {item.id}
           </Text>
         </View>
@@ -701,28 +628,15 @@ export default class App extends Component {
   _renderBTConnectedList = ({item}) => {
     return (
       <TouchableOpacity onPress={() => this.disconnectBTDevice(item)}>
-        <View
-          style={{
-            borderBottomWidth: height * 0.002,
-            borderColor: '#EDB0A6',
-            width: width * 0.32,
-            paddingHorizontal: width * 0.01,
-            paddingVertical: height * 0.015,
-          }}>
+        <View style={style.connectedBtListContainer}>
+          <Text style={style.settingListText}>{item.name}</Text>
           <Text
-            style={{
-              color: 'white',
-              fontSize: width * 0.018,
-              fontFamily: Fonts.VarelaRoundRegular,
-            }}>
-            {item.name}
-          </Text>
-          <Text
-            style={{
-              color: 'white',
-              fontSize: width * 0.014,
-              fontFamily: Fonts.VarelaRoundRegular,
-            }}>
+            style={[
+              style.settingListText,
+              {
+                fontSize: width * 0.014,
+              },
+            ]}>
             {item.id}
           </Text>
         </View>
@@ -1267,13 +1181,12 @@ export default class App extends Component {
               },
             ]}>
             <View
-              style={{
-                width: width * 0.957,
-                height: this.state.fullScreen ? 0 : height * 0.26,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
+              style={[
+                style.innerContainer,
+                {
+                  height: this.state.fullScreen ? 0 : height * 0.26,
+                },
+              ]}>
               <TimerBox
                 criteriaValue={this.state.criteriaValue}
                 minutesTotal={this.handleMinutesTotal}
@@ -1330,17 +1243,7 @@ export default class App extends Component {
                   />
                 </View>
               </View>
-              <View
-                style={{
-                  width: width * 0.28,
-                  height: height * 0.26,
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  alignItems: 'center',
-                  borderRadius: width * 0.005,
-                  borderWidth: height * 0.004,
-                  borderColor: '#5F4B2F',
-                }}>
+              <View style={style.countDownTimerContainer}>
                 <View style={style.header2}>
                   <View style={style.barView} key={this.state.uniqueValue}>
                     <CountdownCircleTimer
@@ -1695,32 +1598,16 @@ export default class App extends Component {
             isVisible={this.state.BTAvailDevModal}
             onBackdropPress={() => this.setState({BTAvailDevModal: false})}
             style={{justifyContent: 'center', alignItems: 'center'}}>
-            <View
-              style={{
-                width: width * 0.35,
-                height: height * 0.58,
-                borderWidth: height * 0.005,
-                borderRadius: width * 0.005,
-                borderColor: '#5F4B2F',
-                backgroundColor: 'black',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  width: width * 0.35,
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  paddingVertical: height * 0.02,
-                  borderBottomWidth: width * 0.001,
-                  borderBottomColor: 'grey',
-                }}>
+            <View style={style.BtModalContainer}>
+              <View style={style.btModalInnerCotainer}>
                 <Text
-                  style={{
-                    color: 'white',
-                    textAlign: 'center',
-                    fontSize: width * 0.022,
-                    fontFamily: Fonts.VarelaRoundRegular,
-                  }}>
+                  style={[
+                    style.settingListText,
+                    {
+                      textAlign: 'center',
+                      fontSize: width * 0.022,
+                    },
+                  ]}>
                   Available Devices
                 </Text>
                 <ActivityIndicator
@@ -1730,15 +1617,7 @@ export default class App extends Component {
                 />
               </View>
               {this.state.notfound ? (
-                <Text
-                  style={{
-                    flex: 1,
-                    marginVertical: height * 0.02,
-                    color: 'white',
-                    textAlign: 'center',
-                    fontSize: width * 0.012,
-                    fontFamily: Fonts.VarelaRoundRegular,
-                  }}>
+                <Text style={style.noBtDevicesText}>
                   No nearby devices were found
                 </Text>
               ) : (
@@ -1748,21 +1627,15 @@ export default class App extends Component {
                 />
               )}
               <TouchableOpacity onPress={this.scanBTAvailDev}>
-                <View
-                  style={{
-                    borderColor: 'white',
-                    borderTopWidth: height * 0.002,
-                    borderColor: '#EDB0A6',
-                    width: width * 0.345,
-                    paddingVertical: height * 0.015,
-                  }}>
+                <View style={style.btScanBtnContainer}>
                   <Text
-                    style={{
-                      textAlign: 'center',
-                      color: 'white',
-                      fontSize: width * 0.02,
-                      fontFamily: Fonts.VarelaRoundRegular,
-                    }}>
+                    style={[
+                      style.settingListText,
+                      {
+                        textAlign: 'center',
+                        fontSize: width * 0.02,
+                      },
+                    ]}>
                     Scan
                   </Text>
                 </View>
@@ -1773,44 +1646,21 @@ export default class App extends Component {
             isVisible={this.state.BTConnectDevModal}
             onBackdropPress={() => this.setState({BTConnectDevModal: false})}
             style={{justifyContent: 'center', alignItems: 'center'}}>
-            <View
-              style={{
-                width: width * 0.35,
-                height: height * 0.58,
-                borderWidth: height * 0.005,
-                borderRadius: width * 0.005,
-                borderColor: '#5F4B2F',
-                backgroundColor: 'black',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  width: width * 0.35,
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                  paddingVertical: height * 0.02,
-                  borderBottomWidth: width * 0.001,
-                  borderBottomColor: 'grey',
-                }}>
+            <View style={style.BtModalContainer}>
+              <View style={style.btModalInnerCotainer}>
                 <Text
-                  style={{
-                    color: 'white',
-                    textAlign: 'center',
-                    fontSize: width * 0.022,
-                    fontFamily: Fonts.VarelaRoundRegular,
-                  }}>
+                  style={[
+                    style.settingListText,
+                    {
+                      textAlign: 'center',
+                      fontSize: width * 0.022,
+                    },
+                  ]}>
                   Connected Devices
                 </Text>
               </View>
               {this.state.notconnected ? (
-                <Text
-                  style={{
-                    marginVertical: height * 0.02,
-                    color: 'white',
-                    textAlign: 'center',
-                    fontSize: width * 0.012,
-                    fontFamily: Fonts.VarelaRoundRegular,
-                  }}>
+                <Text style={style.noBtDevicesText}>
                   No devices were connected
                 </Text>
               ) : (

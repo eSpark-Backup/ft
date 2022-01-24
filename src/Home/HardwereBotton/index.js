@@ -467,30 +467,7 @@ export default class App extends Component {
           this.setState({runningCondtion: true});
         }, 1500);
         console.log(clc.magentaBright('KIA MILA', value));
-        // if (this.state.activiyValue > 10 && this.state.activiyValue < 21) {
-        //   // console.log('10 wali')
-        //   const total = (Number(value) + 10).toString();
-        //   // console.log('total Value 10', total)
-        //   setTimeout(() => {
-        //     this.props.hardValue(total);
-        //   }, 5);
-        //   setTimeout(() => {
-        //     this.props.hardValue(0);
-        //   }, 500);
-        //   // this.checkActivity()
-        // } else if (this.state.activiyValue > 20) {
-        //   // console.log('20 wali')
-        //   // console.log('total Value 21', total)
-        //   const total = (Number(value) + 20).toString();
-        //   setTimeout(() => {
-        //     this.props.hardValue(total);
-        //   }, 5);
-        //   setTimeout(() => {
-        //     this.props.hardValue(0);
-        //   }, 500);
-        //   // this.checkActivity()
-        // } else {
-        // console.log('else wali')
+
         setTimeout(() => {
           this.props.hardValue(value);
         }, 5);
@@ -507,11 +484,6 @@ export default class App extends Component {
         setTimeout(() => {
           this.setState({runningCondtion: true});
         }, 2000);
-        // Alert.alert('Alert!!', 'Wait A Second Press Again', [
-        //   {
-        //     text: 'Okay',
-        //   },
-        // ]);
       }
     }
   };
@@ -543,17 +515,7 @@ export default class App extends Component {
     return (
       <View key={index}>
         <TouchableOpacity
-          style={{
-            width: height * 0.13,
-            height: height * 0.13,
-            backgroundColor: '#A6A6A6',
-            borderRadius: width * 0.1,
-            borderWidth: width * 0.003,
-            borderColor: 'white',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginHorizontal: height * 0.001,
-          }}
+          style={style.hardwareBtn}
           activeOpacity={0.5}
           onPress={() => {
             this.bluetoothButtonWork(item.id);
@@ -570,17 +532,7 @@ export default class App extends Component {
     return (
       <View key={index}>
         <TouchableOpacity
-          style={{
-            width: height * 0.13,
-            height: height * 0.13,
-            backgroundColor: '#A6A6A6',
-            borderRadius: width * 0.1,
-            borderWidth: width * 0.003,
-            borderColor: 'white',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginHorizontal: height * 0.001,
-          }}
+          style={style.hardwareBtn}
           activeOpacity={0.5}
           onPress={() => {
             this.hardwereBottonWork(item.id);
@@ -683,6 +635,9 @@ export default class App extends Component {
             overflow: 'hidden',
           },
         ]}>
+        {/* 
+          //! Test Modal just used to Observe the output recieved serially
+        */}
         <Modal
           visible={this.state.serialModal}
           animationType="slide"

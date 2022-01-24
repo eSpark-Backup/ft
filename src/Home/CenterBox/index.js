@@ -572,7 +572,6 @@ export default class App extends Component {
         style={{
           width: width * 0.09,
           marginHorizontal: width * 0.005,
-          // marginRight: width * .09,
           justifyContent: 'center',
           alignItems: 'center',
         }}>
@@ -616,12 +615,9 @@ export default class App extends Component {
           fontFamily: Fonts.VarelaRoundRegular,
           textAlign: 'center',
           width: width * 0.2,
-          // marginHorizontal: width * .005,
           borderBottomWidth: width * 0.001,
           borderTopWidth: width * 0.001,
           marginBottom: height * 0.0047,
-          // backgroundColor: 'orange',
-          // borderColor: 'orange',
         }}>
         {item.roundLap + ' / ' + item.totalTime}
       </Text>
@@ -632,16 +628,6 @@ export default class App extends Component {
     const {activity, graph, roundIndex} = this.state;
     return (
       <View style={{flex: 1, flexDirection: 'row'}} key={index}>
-        {/* <Text
-           style={{
-             fontSize: width * 0.015,
-             color: 'white',
-             fontFamily: Fonts.VarelaRoundRegular,
-             textAlign: 'center',
-             top: width * .001
-           }}>
-           {item.name + (index + 1)}
-         </Text> */}
         <View>
           <FlatList
             horizontal={true}
@@ -652,18 +638,6 @@ export default class App extends Component {
             renderItem={(item, index) => this._renderMyList(item, index)}
           />
         </View>
-        {/* <Text
-           style={{
-             fontSize: width * 0.015,
-             color: 'white',
-             fontFamily: Fonts.VarelaRoundRegular,
-             textAlign: 'center',
-             width: width * .2,
-             marginHorizontal: width * .005,
-             marginRight: width * .1,
-           }}>
-           {item.roundLap + ' / ' + item.totalTime}
-         </Text> */}
       </View>
     );
   };
