@@ -102,6 +102,7 @@ export default styles = StyleSheet.create({
     color: 'white',
     fontSize: width * 0.018,
     fontFamily: Fonts.VarelaRoundRegular,
+    // fontFamily: Fonts.UthmanTahaRegular,
   },
   innerSettingListContainer: {
     borderWidth: height * 0.002,

@@ -60,6 +60,7 @@ const Button = ({
     },
     submitBtnText: {
       fontFamily: Fonts.Lato,
+      // fontFamily: Fonts.ToyorRegular,
       fontSize: height * 0.04,
       color: 'white',
       margin: height * 0.01,

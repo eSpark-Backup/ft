@@ -57,6 +57,8 @@
 		8F315C7A77DC4D5AAA9D032D /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 443E13046B4F4982BD63DF10 /* SimpleLineIcons.ttf */; };
 		8D83B20C11F343A58A3582EB /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C151A9FF847D4694A9FC31B0 /* Zocial.ttf */; };
 		63D74955BEBD48EBBAA62766 /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0100356A923640AD8CE24377 /* Nunito-ExtraBold.ttf */; };
+		4B79B9B39303484596D8A861 /* ToyorAljanah-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F109CA934A5CAC09FCCC /* ToyorAljanah-Regular.otf */; };
+		E5C6222EA4D84CDE91CC936D /* Uthman-Taha-Naskh-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C84A430BFB5C49C5917F8E83 /* Uthman-Taha-Naskh-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +135,8 @@
 		443E13046B4F4982BD63DF10 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		C151A9FF847D4694A9FC31B0 /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		0100356A923640AD8CE24377 /* Nunito-ExtraBold.ttf */ = {isa = PBXFileReference; name = "Nunito-ExtraBold.ttf"; path = "../src/assets/fonts/Nunito-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CFC4F109CA934A5CAC09FCCC /* ToyorAljanah-Regular.otf */ = {isa = PBXFileReference; name = "ToyorAljanah-Regular.otf"; path = "../src/assets/fonts/ToyorAljanah-Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C84A430BFB5C49C5917F8E83 /* Uthman-Taha-Naskh-Regular.ttf */ = {isa = PBXFileReference; name = "Uthman-Taha-Naskh-Regular.ttf"; path = "../src/assets/fonts/Uthman-Taha-Naskh-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -284,6 +288,8 @@
 				443E13046B4F4982BD63DF10 /* SimpleLineIcons.ttf */,
 				C151A9FF847D4694A9FC31B0 /* Zocial.ttf */,
 				0100356A923640AD8CE24377 /* Nunito-ExtraBold.ttf */,
+				CFC4F109CA934A5CAC09FCCC /* ToyorAljanah-Regular.otf */,
+				C84A430BFB5C49C5917F8E83 /* Uthman-Taha-Naskh-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -468,6 +474,8 @@
 				8F315C7A77DC4D5AAA9D032D /* SimpleLineIcons.ttf in Resources */,
 				8D83B20C11F343A58A3582EB /* Zocial.ttf in Resources */,
 				63D74955BEBD48EBBAA62766 /* Nunito-ExtraBold.ttf in Resources */,
+				4B79B9B39303484596D8A861 /* ToyorAljanah-Regular.otf in Resources */,
+				E5C6222EA4D84CDE91CC936D /* Uthman-Taha-Naskh-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

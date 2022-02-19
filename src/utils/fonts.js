@@ -7,4 +7,6 @@ export const Fonts = {
   Lato: 'Lato-Regular',
   LatoBold: 'Lato-Bold',
   LatoLight: 'Lato-Light',
+  ToyorRegular: 'ToyorAljanah-Regular',
+  UthmanTahaRegular: 'Uthman-Taha-Naskh-Regular',
 };
