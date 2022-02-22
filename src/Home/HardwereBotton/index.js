@@ -367,7 +367,7 @@ export default class App extends Component {
 
   //? For #fff BLE COMMANDS THIS IS NEEDED
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.bluetoothOn) {
+    if (this.props.bluetoothOn || this.state.connected) {
       this.setState({
         activity: nextProps.activity,
       });
@@ -396,7 +396,7 @@ export default class App extends Component {
   }
 
   checkActivity = () => {
-    // console.log('activity VAlue ka bata', this.state.activiyValue)
+    // console.log('activity VAlue ka bata', this.state.activiyValue);
     if (this.state.activiyValue == this.state.activity.length) {
       this.setState({activiyValue: 1});
       this.setState({bluetoothIndex: 1});
@@ -404,8 +404,9 @@ export default class App extends Component {
       this.setState({temp: 1});
       if (this.state.connected && !this.props.bluetoothOn) {
         RNSerialport.writeString('N');
+        console.log(clc.xterm(172)('Send N'));
       }
-      console.log(clc.xterm(172)('Reset Temp'));
+      console.log(clc.xterm(172)('Reset Temp------------------------'));
       setTimeout(() => {
         this.setState({actCondition: false});
       }, 100);
@@ -491,7 +492,7 @@ export default class App extends Component {
     if (this.state.isShow == true && this.state.emomCondition == false) {
       if (this.state.runningCondtion == true) {
         if (this.state.connected && !this.props.bluetoothOn) {
-          console.log(clc.xterm(172)('Reset Serial Comm'));
+          console.log(clc.xterm(172)('Reset Serial Comm Round'));
           RNSerialport.writeString('N');
         }
         this.setState({
