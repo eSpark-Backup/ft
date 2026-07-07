@@ -64,7 +64,7 @@
     "react-redux": "^7.2.1",
     "redux": "^5.0.1",
     "redux-persist": "^5.10.0",
-    "redux-thunk": "^2.3.0",
+    "redux-thunk": "^3.1.0",
     "rn-modal-picker": "^0.3.0"
   },
   "devDependencies": {
